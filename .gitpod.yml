@@ -13,17 +13,21 @@ tasks:
 
   - command: |
       flutter devices
-      flutter run --web-port 8080
+      flutter run --web-port 8080 -d web-server
 
 ports:
   - port: 5900
     onOpen: ignore
     # VNC
   - port: 6080
-    onOpen: open-browser
+    onOpen: ignore
     # Flutter Web
   - port: 8080
-    onOpen: open-preview
+    onOpen: ignore
+  - port: 9100
+    onOpen: ignore
+  - port: 9101
+    onOpen: ignore
 
 vscode:
   extensions:
