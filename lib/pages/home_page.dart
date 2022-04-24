@@ -1,0 +1,120 @@
+import 'package:flutter/material.dart';
+import 'package:url_launcher/url_launcher.dart';
+
+class HomePage extends StatefulWidget {
+  const HomePage({Key? key}) : super(key: key);
+
+  @override
+  State<HomePage> createState() => _HomePageState();
+}
+
+class _HomePageState extends State<HomePage> {
+  final formKey = GlobalKey<FormState>();
+
+  final _countryCodeTEC = TextEditingController();
+  final _areaCodeTEC = TextEditingController();
+  final _phoneNumberTEC = TextEditingController();
+
+  _parseCompleteNumber() {
+    return '+${_countryCodeTEC.text}${_areaCodeTEC.text}${_phoneNumberTEC.text}';
+  }
+
+  _openInWhatsapp() async {
+    final completePhoneNumber = _parseCompleteNumber();
+    final whatsAppUri = Uri(
+      scheme: 'https',
+      host: 'api.whatsapp.com',
+      path: 'send',
+      queryParameters: {
+        'phone': completePhoneNumber,
+      },
+    );
+
+    if (await canLaunchUrl(whatsAppUri)) {
+      await launchUrl(whatsAppUri);
+    } else {
+      throw 'Could not launch $whatsAppUri';
+    }
+  }
+
+  _openInTelegram() async {
+    // const url = ‘https://flutter.io’;
+    // if (await canLaunch(url)) {
+    //   await launch(url);
+    // } else {
+    //   throw ‘Could not launch $url’;
+    // }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        backgroundColor: Colors.transparent,
+        elevation: 0,
+      ),
+      backgroundColor: Colors.white,
+      body: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 40),
+        child: Form(
+          key: formKey,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            mainAxisAlignment: MainAxisAlignment.start,
+            children: [
+              const Text(
+                'Welcome to Quick Chat!',
+                style: TextStyle(
+                  fontSize: 30,
+                  color: Colors.black,
+                ),
+              ),
+              TextFormField(
+                decoration: const InputDecoration(
+                  labelText: 'Enter the Country Code',
+                  hintText: 'Country Code',
+                ),
+                // initialValue: '55',
+                controller: _countryCodeTEC,
+                // validator: (value) {
+                //   if (value!.isNotEmpty) {
+                //     return value;
+                //   }
+                //   return '';
+                // },
+              ),
+              TextFormField(
+                decoration: const InputDecoration(
+                  labelText: 'Enter the Area Code',
+                  hintText: 'Area Code',
+                ),
+                // initialValue: '11',
+                controller: _areaCodeTEC,
+              ),
+              TextFormField(
+                decoration: const InputDecoration(
+                  labelText: 'Enter the Phone Number',
+                  hintText: 'Phone Number',
+                ),
+                controller: _phoneNumberTEC,
+              ),
+              ElevatedButton.icon(
+                onPressed: _openInWhatsapp,
+                icon: const Icon(Icons.whatsapp, size: 18),
+                label: const Text('Open in WhatsApp'),
+                // style: ButtonStyle(
+                //   backgroundColor: Color(Colors.green),
+                // ),
+              ),
+              ElevatedButton.icon(
+                onPressed: null,
+                icon: const Icon(Icons.telegram, size: 18),
+                label: const Text('Open in Telegram'),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
