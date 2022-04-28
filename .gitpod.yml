@@ -24,6 +24,7 @@ ports:
     # Flutter Web
   - port: 8080
     onOpen: ignore
+    visibility: public
   - port: 9100
     onOpen: ignore
   - port: 9101

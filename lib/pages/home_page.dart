@@ -11,12 +11,10 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> {
   final formKey = GlobalKey<FormState>();
 
-  final _countryCodeTEC = TextEditingController();
-  final _areaCodeTEC = TextEditingController();
   final _phoneNumberTEC = TextEditingController();
 
   _parseCompleteNumber() {
-    return '+${_countryCodeTEC.text}${_areaCodeTEC.text}${_phoneNumberTEC.text}';
+    return _phoneNumberTEC.text;
   }
 
   _openInWhatsapp() async {
@@ -38,12 +36,7 @@ class _HomePageState extends State<HomePage> {
   }
 
   _openInTelegram() async {
-    // const url = ‘https://flutter.io’;
-    // if (await canLaunch(url)) {
-    //   await launch(url);
-    // } else {
-    //   throw ‘Could not launch $url’;
-    // }
+
   }
 
   @override
@@ -68,28 +61,6 @@ class _HomePageState extends State<HomePage> {
                   fontSize: 30,
                   color: Colors.black,
                 ),
-              ),
-              TextFormField(
-                decoration: const InputDecoration(
-                  labelText: 'Enter the Country Code',
-                  hintText: 'Country Code',
-                ),
-                // initialValue: '55',
-                controller: _countryCodeTEC,
-                // validator: (value) {
-                //   if (value!.isNotEmpty) {
-                //     return value;
-                //   }
-                //   return '';
-                // },
-              ),
-              TextFormField(
-                decoration: const InputDecoration(
-                  labelText: 'Enter the Area Code',
-                  hintText: 'Area Code',
-                ),
-                // initialValue: '11',
-                controller: _areaCodeTEC,
               ),
               TextFormField(
                 decoration: const InputDecoration(
