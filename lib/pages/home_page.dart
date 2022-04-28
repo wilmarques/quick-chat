@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher.dart';
+import 'package:clipboard/clipboard.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({Key? key}) : super(key: key);
@@ -13,11 +14,11 @@ class _HomePageState extends State<HomePage> {
 
   final _phoneNumberTEC = TextEditingController();
 
-  _parseCompleteNumber() {
+  String _parseCompleteNumber() {
     return _phoneNumberTEC.text;
   }
 
-  _openInWhatsapp() async {
+  void _openInWhatsapp() async {
     final completePhoneNumber = _parseCompleteNumber();
     final whatsAppUri = Uri(
       scheme: 'https',
@@ -35,9 +36,14 @@ class _HomePageState extends State<HomePage> {
     }
   }
 
-  _openInTelegram() async {
-
+  void _pasteFromClipboard() async {
+    final clipboardValue = await FlutterClipboard.paste();
+    setState(() {
+      _phoneNumberTEC.text = clipboardValue;
+    });
   }
+
+  // _openInTelegram() async {}
 
   @override
   Widget build(BuildContext context) {
@@ -76,6 +82,11 @@ class _HomePageState extends State<HomePage> {
                 // style: ButtonStyle(
                 //   backgroundColor: Color(Colors.green),
                 // ),
+              ),
+              ElevatedButton.icon(
+                onPressed: _pasteFromClipboard,
+                icon: const Icon(Icons.paste, size: 18),
+                label: const Text('Paste from Clipboard'),
               ),
               ElevatedButton.icon(
                 onPressed: null,
