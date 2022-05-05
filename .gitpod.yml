@@ -11,10 +11,6 @@ tasks:
       flutter doctor
       flutter pub get
 
-  - command: |
-      flutter devices
-      flutter run --web-port 8080 -d web-server
-
 ports:
   - port: 5900
     onOpen: ignore

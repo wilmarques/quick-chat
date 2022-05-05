@@ -1,11 +1,11 @@
 {
   "name": "Quick Chat",
   "short_name": "Quick Chat",
-  "start_url": ".",
+  "start_url": "index.html",
   "display": "standalone",
   "background_color": "#0175C2",
   "theme_color": "#0175C2",
-  "description": "An app that receives a phone number and provide simple ways to open in chat apps, like WhatsApp.",
+  "description": "Quickly open a chat with any phone number.",
   "orientation": "portrait-primary",
   "prefer_related_applications": false,
   "icons": [
@@ -42,7 +42,7 @@
   ],
   "screenshots": [
     {
-      "src": "home.png",
+      "src": "screenshots/home.png",
       "sizes": "1280x720",
       "type": "image/png",
       "platform": "narrow",
