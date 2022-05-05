@@ -74,6 +74,7 @@ class _HomePageState extends State<HomePage> {
                   hintText: 'Phone Number',
                 ),
                 controller: _phoneNumberTEC,
+                keyboardType: TextInputType.phone,
               ),
               ElevatedButton.icon(
                 onPressed: _openInWhatsapp,
