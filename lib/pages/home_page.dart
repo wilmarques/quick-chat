@@ -13,19 +13,20 @@ class _HomePageState extends State<HomePage> {
   final formKey = GlobalKey<FormState>();
 
   final _phoneNumberTEC = TextEditingController();
+  final _countryCodeTEC = TextEditingController(text: '55');
+  final _areaCodeTEC = TextEditingController(text: '11');
 
   String _parseCompleteNumber() {
-    return _phoneNumberTEC.text;
+    return '+${_countryCodeTEC.text}${_areaCodeTEC.text}${_phoneNumberTEC.text}';
   }
 
   void _openInWhatsapp() async {
-    final completePhoneNumber = _parseCompleteNumber();
     final whatsAppUri = Uri(
       scheme: 'https',
       host: 'api.whatsapp.com',
       path: 'send',
       queryParameters: {
-        'phone': completePhoneNumber,
+        'phone': _parseCompleteNumber(),
       },
     );
 
@@ -70,8 +71,33 @@ class _HomePageState extends State<HomePage> {
               ),
               TextFormField(
                 decoration: const InputDecoration(
-                  labelText: 'Enter the Phone Number',
-                  hintText: 'Phone Number',
+                  labelText: 'Country Code',
+                  hintText: 'eg: 55 for Brazil',
+                  hintStyle: TextStyle(
+                    color: Colors.grey,
+                  ),
+                ),
+                controller: _countryCodeTEC,
+                keyboardType: TextInputType.phone,
+              ),
+              TextFormField(
+                decoration: const InputDecoration(
+                  labelText: 'Area Code',
+                  hintText: 'eg: 11 for São Paulo',
+                  hintStyle: TextStyle(
+                    color: Colors.grey,
+                  ),
+                ),
+                controller: _areaCodeTEC,
+                keyboardType: TextInputType.phone,
+              ),
+              TextFormField(
+                decoration: const InputDecoration(
+                  labelText: 'Phone Number',
+                  hintText: 'eg: 912345678',
+                  hintStyle: TextStyle(
+                    color: Colors.grey,
+                  ),
                 ),
                 controller: _phoneNumberTEC,
                 keyboardType: TextInputType.phone,
