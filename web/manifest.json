@@ -2,11 +2,12 @@
   "name": "Quick Chat",
   "short_name": "Quick Chat",
   "start_url": "index.html",
+  "categories": ["social"],
   "display": "standalone",
   "background_color": "#0175C2",
   "theme_color": "#0175C2",
   "description": "Quickly open a chat with any phone number.",
-  "orientation": "portrait-primary",
+  "orientation": "portrait",
   "prefer_related_applications": false,
   "icons": [
     {
