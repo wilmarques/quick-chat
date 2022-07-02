@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:phone_form_field/phone_form_field.dart';
 import 'package:url_launcher/url_launcher.dart';
-import 'package:clipboard/clipboard.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({Key? key}) : super(key: key);
@@ -12,12 +12,11 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> {
   final formKey = GlobalKey<FormState>();
 
-  final _phoneNumberTEC = TextEditingController();
-  final _countryCodeTEC = TextEditingController(text: '55');
-  final _areaCodeTEC = TextEditingController(text: '11');
+  final _phoneNumberController = PhoneController(null);
 
   String _parseCompleteNumber() {
-    return '+${_countryCodeTEC.text}${_areaCodeTEC.text}${_phoneNumberTEC.text}';
+    final parsedNumber = _phoneNumberController.value?.international ?? '';
+    return parsedNumber;
   }
 
   void _openInWhatsapp() async {
@@ -36,15 +35,6 @@ class _HomePageState extends State<HomePage> {
       throw 'Could not launch $whatsAppUri';
     }
   }
-
-  void _pasteFromClipboard() async {
-    final clipboardValue = await FlutterClipboard.paste();
-    setState(() {
-      _phoneNumberTEC.text = clipboardValue;
-    });
-  }
-
-  // _openInTelegram() async {}
 
   @override
   Widget build(BuildContext context) {
@@ -69,56 +59,15 @@ class _HomePageState extends State<HomePage> {
                   color: Colors.black,
                 ),
               ),
-              TextFormField(
-                decoration: const InputDecoration(
-                  labelText: 'Country Code',
-                  hintText: 'eg: 55 for Brazil',
-                  hintStyle: TextStyle(
-                    color: Colors.grey,
-                  ),
-                ),
-                controller: _countryCodeTEC,
-                keyboardType: TextInputType.phone,
+
+              PhoneFormField(
+                controller: _phoneNumberController,
               ),
-              TextFormField(
-                decoration: const InputDecoration(
-                  labelText: 'Area Code',
-                  hintText: 'eg: 11 for São Paulo',
-                  hintStyle: TextStyle(
-                    color: Colors.grey,
-                  ),
-                ),
-                controller: _areaCodeTEC,
-                keyboardType: TextInputType.phone,
-              ),
-              TextFormField(
-                decoration: const InputDecoration(
-                  labelText: 'Phone Number',
-                  hintText: 'eg: 912345678',
-                  hintStyle: TextStyle(
-                    color: Colors.grey,
-                  ),
-                ),
-                controller: _phoneNumberTEC,
-                keyboardType: TextInputType.phone,
-              ),
+
               ElevatedButton.icon(
                 onPressed: _openInWhatsapp,
                 icon: const Icon(Icons.whatsapp, size: 18),
                 label: const Text('Open in WhatsApp'),
-                // style: ButtonStyle(
-                //   backgroundColor: Color(Colors.green),
-                // ),
-              ),
-              ElevatedButton.icon(
-                onPressed: _pasteFromClipboard,
-                icon: const Icon(Icons.paste, size: 18),
-                label: const Text('Paste from Clipboard'),
-              ),
-              ElevatedButton.icon(
-                onPressed: null,
-                icon: const Icon(Icons.telegram, size: 18),
-                label: const Text('Open in Telegram'),
               ),
             ],
           ),

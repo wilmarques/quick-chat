@@ -17,6 +17,7 @@ ports:
     # VNC
   - port: 6080
     onOpen: ignore
+    visibility: public
     # Flutter Web
   - port: 8080
     onOpen: ignore
