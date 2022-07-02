@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:phone_form_field/phone_form_field.dart';
 import 'package:url_launcher/url_launcher.dart';
 
@@ -12,7 +13,8 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> {
   final formKey = GlobalKey<FormState>();
 
-  final _phoneNumberController = PhoneController(null);
+  final _currentLocale = Intl.getCurrentLocale();
+  final _phoneNumberController = PhoneController(PhoneNumber.fromCountryCode('55', ''));
 
   String _parseCompleteNumber() {
     final parsedNumber = _phoneNumberController.value?.international ?? '';
