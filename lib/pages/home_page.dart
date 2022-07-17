@@ -1,3 +1,4 @@
+import 'package:devicelocale/devicelocale.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:phone_form_field/phone_form_field.dart';
@@ -13,8 +14,13 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> {
   final formKey = GlobalKey<FormState>();
 
-  final _currentLocale = Intl.getCurrentLocale();
-  final _phoneNumberController = PhoneController(PhoneNumber.fromCountryCode('55', ''));
+  // final _currentLocale = Intl.getCurrentLocale().split('_').last;
+  // final _currentLocale = await Devicelocale.currentLocale;
+
+  // final _phoneNumberInitialValue = PhoneNumber.fromIsoCode(IsoCode.US, '');
+
+  // IsoCode f = IsoCode.values.firstWhere((e) => e.toString() == 'US');
+  final _phoneNumberController = PhoneController(PhoneNumber.fromIsoCode(IsoCode.US, ''));
 
   String _parseCompleteNumber() {
     final parsedNumber = _phoneNumberController.value?.international ?? '';
@@ -40,6 +46,23 @@ class _HomePageState extends State<HomePage> {
 
   @override
   Widget build(BuildContext context) {
+    // final locale = Devicelocale.currentLocale;
+    _phoneNumberController.value = PhoneNumber.fromIsoCode(
+      IsoCode.values.byName(Intl.getCurrentLocale().split('_').last), '');
+    // _phoneNumberController.value = PhoneNumber.fromIsoCode(
+    //   IsoCode.values.byName('BR'), '');
+
+    // return FutureBuilder<String>(
+    //   future: locale,
+    //   builder: (context, snapshot) {
+    //     if (snapshot.hasData) {
+    //       return Text(snapshot.data);
+    //     } else {
+    //       return Text('awaiting the future');
+    //     }
+    //   },
+    // );
+
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.transparent,
@@ -61,11 +84,9 @@ class _HomePageState extends State<HomePage> {
                   color: Colors.black,
                 ),
               ),
-
               PhoneFormField(
                 controller: _phoneNumberController,
               ),
-
               ElevatedButton.icon(
                 onPressed: _openInWhatsapp,
                 icon: const Icon(Icons.whatsapp, size: 18),
