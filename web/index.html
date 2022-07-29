@@ -27,9 +27,9 @@
   <link rel="manifest" href="manifest.json">
 </head>
 
-<body style="background-color: #0175C2; display: grid; justify-content: center; align-content: center;">
+<body style="background-color: #0175C2; display: grid; align-content: center; justify-items: center; grid-template-rows: 100vh;">
 
-  <img src="icons/icon-512.png" alt="" srcset="">
+  <img src="icons/icon-512.png" style="justify-self: center; align-self: center;">
 
   <!-- This script installs service_worker.js to provide PWA functionality to
        application. For more information, see:
@@ -45,7 +45,7 @@
       var scriptTag = document.createElement('script');
       scriptTag.src = 'main.dart.js';
       scriptTag.type = 'application/javascript';
-      document.body.append(scriptTag);
+      // document.body.append(scriptTag);
     }
 
     if ('serviceWorker' in navigator) {
