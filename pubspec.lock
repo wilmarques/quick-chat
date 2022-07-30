@@ -71,6 +71,13 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "3.0.2"
+  diacritic:
+    dependency: transitive
+    description:
+      name: diacritic
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "0.1.3"
   fake_async:
     dependency: transitive
     description:
@@ -89,7 +96,7 @@ packages:
       name: flutter_lints
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "1.0.4"
+    version: "2.0.1"
   flutter_localizations:
     dependency: transitive
     description: flutter
@@ -125,7 +132,7 @@ packages:
       name: lints
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "1.0.1"
+    version: "2.0.0"
   matcher:
     dependency: transitive
     description:
@@ -160,7 +167,7 @@ packages:
       name: phone_form_field
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "6.1.0"
+    version: "7.0.1"
   phone_number_metadata:
     dependency: transitive
     description:
@@ -174,7 +181,7 @@ packages:
       name: phone_numbers_parser
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "5.0.5"
+    version: "6.0.0"
   plugin_platform_interface:
     dependency: transitive
     description:
@@ -235,7 +242,7 @@ packages:
       name: url_launcher
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "6.1.4"
+    version: "6.1.5"
   url_launcher_android:
     dependency: transitive
     description:
@@ -293,5 +300,5 @@ packages:
     source: hosted
     version: "2.1.2"
 sdks:
-  dart: ">=2.17.0-0 <3.0.0"
+  dart: ">=2.17.0-206.0.dev <3.0.0"
   flutter: ">=3.0.0"
