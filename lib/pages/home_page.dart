@@ -67,7 +67,7 @@ class _HomePageState extends State<HomePage> {
               ElevatedButton.icon(
                 onPressed: _openInWhatsapp,
                 icon: const Icon(Icons.whatsapp, size: 18),
-                label: const Text('Chat in WhatsApp'),
+                label: const Text('Open in WhatsApp'),
               ),
             ],
           ),
