@@ -18,10 +18,11 @@ ENV PUB_CACHE="/workspaces/.pub_cache"
 
 # Install Google Chrome
 USER root
-
 RUN apt-get update && export DEBIAN_FRONTEND=noninteractive \
   && curl -sSL https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb -o /tmp/chrome.deb \
   && apt-get -y install /tmp/chrome.deb
+RUN apt-get update && export DEBIAN_FRONTEND=noninteractive && apt-get install -y firefox-esr
+
 # TODO: Chrome is crashing
 # [0731/121628.405381:ERROR:file_io_posix.cc(144)] open /sys/devices/system/cpu/cpu0/cpufreq/scaling_cur_freq: No such file or directory (2)
 # [0731/121628.405460:ERROR:file_io_posix.cc(144)] open /sys/devices/system/cpu/cpu0/cpufreq/scaling_max_freq: No such file or directory (2)
@@ -39,3 +40,5 @@ RUN apt-get update && export DEBIAN_FRONTEND=noninteractive \
 #   libnss3-dev \
 #   fonts-noto \
 #   fonts-noto-cjk
+
+USER vscode
