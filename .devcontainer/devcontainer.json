@@ -1,44 +1,50 @@
+// For format details, see https://aka.ms/devcontainer.json. For config options, see the README at:
+// https://github.com/microsoft/vscode-dev-containers/tree/v0.238.1/containers/debian
 {
-	"name": "Flutter",
-	"build": {
-		"dockerfile": "Dockerfile"
-	},
-	// Configure tool-specific properties.
-	"customizations": {
-		// Configure properties specific to VS Code.
-		"vscode": {
-			// Set *default* container specific settings.json values on container create.
-			"settings": {},
-			// Add the IDs of extensions you want installed when the container is created.
-			"extensions": [
-				"dart-code.flutter",
-				"dart-code.dart-code",
-				"editorconfig.editorconfig"
-			]
-		}
-	},
-	"runArgs": [
-		"--init",
-		"--shm-size=4g"
-	],
-	"features": {
-		"desktop-lite": {
-			"password": "vscode",
-			"webPort": "6080",
-			"vncPort": "5900"
-		}
-	},
-	// Use 'forwardPorts' to make a list of ports inside the container available locally.
-	"forwardPorts": [
-		// Flutter run web
-		8080,
-		// VNC client
-		6080,
-		// VNC server
-		5900
-	],
-	// Use 'postCreateCommand' to run commands after the container is created.
-	// "postCreateCommand": "java -version",
-	// Comment out to connect as root instead. More info: https://aka.ms/vscode-remote/containers/non-root.
-	"remoteUser": "vscode"
+  "name": "Debian",
+  "build": {
+    "dockerfile": "Dockerfile",
+    // Update 'VARIANT' to pick an Debian version: bullseye, buster
+    // Use bullseye on local arm64/Apple Silicon.
+    "args": {
+      "VARIANT": "bullseye"
+    }
+  },
+  // Configure tool-specific properties.
+  "customizations": {
+    // Configure properties specific to VS Code.
+    "vscode": {
+      // Set *default* container specific settings.json values on container create.
+      "settings": {},
+      // Add the IDs of extensions you want installed when the container is created.
+      "extensions": [
+        "dart-code.flutter",
+        "dart-code.dart-code",
+        "editorconfig.editorconfig"
+      ]
+    }
+  },
+  "runArgs": [
+    "--init",
+    "--shm-size=4g",
+    "--security-opt"
+  ],
+  "features": {
+    "desktop-lite": "latest"
+  },
+  // Use 'forwardPorts' to make a list of ports inside the container available locally.
+  "forwardPorts": [
+    // Flutter run web
+    8080,
+    // VNC client
+    6080,
+    // VNC server
+    5901
+  ],
+  // Use 'postCreateCommand' to run commands after the container is created.
+  // "postCreateCommand": "java -version",
+  // Uncomment to use the Docker CLI from inside the container. See https://aka.ms/vscode-remote/samples/docker-from-docker.
+  // "mounts": [ "source=/var/run/docker.sock,target=/var/run/docker.sock,type=bind" ],
+  // Comment out to connect as root instead. More info: https://aka.ms/vscode-remote/containers/non-root.
+  "remoteUser": "vscode"
 }
