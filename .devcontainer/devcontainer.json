@@ -1,0 +1,49 @@
+{
+	"name": "Flutter",
+	"build": {
+		"dockerfile": "Dockerfile"
+	},
+
+	// Configure tool-specific properties.
+	"customizations": {
+		// Configure properties specific to VS Code.
+		"vscode": {
+			// Set *default* container specific settings.json values on container create.
+			"settings": {
+			},
+
+			// Add the IDs of extensions you want installed when the container is created.
+			"extensions": [
+				"dart-code.flutter",
+        "dart-code.dart-code",
+        "editorconfig.editorconfig"
+			]
+		}
+	},
+
+  "runArgs": [
+    "--init",
+    "--shm-size=4096m"
+  ],
+  "features": {
+    "desktop-lite": {
+      "password": "vscode",
+      "webPort": "6080",
+      "vncPort": "5900"
+    }
+  },
+
+	// Use 'forwardPorts' to make a list of ports inside the container available locally.
+	"forwardPorts": [
+    // Flutter run web
+    8080,
+    // VNC client
+    6080
+  ],
+
+	// Use 'postCreateCommand' to run commands after the container is created.
+	// "postCreateCommand": "java -version",
+
+	// Comment out to connect as root instead. More info: https://aka.ms/vscode-remote/containers/non-root.
+	"remoteUser": "vscode"
+}

@@ -14,8 +14,6 @@ RUN git clone https://github.com/flutter/flutter -b ${FLUTTER_VERSION} --depth=1
 ENV PATH="/home/gitpod/flutter/bin:$PATH"
 ENV PUB_CACHE="/workspace/.pub_cache"
 
-# RUN flutter precache
-
 ############################################################
 ######################### ANDROID ##########################
 ############################################################
