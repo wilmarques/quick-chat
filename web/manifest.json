@@ -6,7 +6,7 @@
   "categories": ["social"],
   "display": "standalone",
   "background_color": "#25d366",
-  "theme_color": "#25d366",
+  "theme_color": "#ffffff",
   "description": "Quickly open a chat with any phone number.",
   "orientation": "portrait",
   "prefer_related_applications": false,
