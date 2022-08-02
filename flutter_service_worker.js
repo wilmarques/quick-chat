@@ -311,10 +311,10 @@ const RESOURCES = {
 "icons/icon-512.png": "d5b2195c83635f7e5bc84c65f4cdee45",
 "icons/icon-72.png": "dc09e758191420adefd5449b6b2352a5",
 "icons/icon-96.png": "0bc594fe44d8633d716c1933cfdacd70",
-"index.html": "fd1259f832ba89a3e7ba42e092b67d13",
-"/": "fd1259f832ba89a3e7ba42e092b67d13",
+"index.html": "4b70c71c47bbe2c99474781db38753af",
+"/": "4b70c71c47bbe2c99474781db38753af",
 "main.dart.js": "702ed3c2ab69b091c8eb544e1c5f52f9",
-"manifest.json": "de176af3de3383e721694ec3f6ed8073",
+"manifest.json": "ab978841463afd0a777788f1a4d00e34",
 "screenshots/home.png": "aed03c3143438a1d7475aad43362fda7",
 "version.json": "385a1558df3f3daa573dc6e4b97e39e2"
 };
