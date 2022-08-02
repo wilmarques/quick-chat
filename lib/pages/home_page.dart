@@ -1,3 +1,4 @@
+import 'package:clipboard/clipboard.dart';
 import 'package:flutter/material.dart';
 import 'package:phone_form_field/phone_form_field.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -19,6 +20,15 @@ class _HomePageState extends State<HomePage> {
   String _parseCompleteNumber() {
     final parsedNumber = _phoneNumberController.value?.international ?? '';
     return parsedNumber;
+  }
+
+  void _pasteFromClipboard() {
+    FlutterClipboard.paste().then((value) {
+      setState(() {
+        _phoneNumberController.value = PhoneNumber.fromIsoCode(
+            IsoCode.values.byName(ui.window.locale.countryCode ?? 'US'), value);
+      });
+    });
   }
 
   void _openInWhatsapp() async {
@@ -63,6 +73,11 @@ class _HomePageState extends State<HomePage> {
               ),
               PhoneFormField(
                 controller: _phoneNumberController,
+              ),
+              ElevatedButton.icon(
+                onPressed: _pasteFromClipboard,
+                icon: const Icon(Icons.paste, size: 18),
+                label: const Text('Paste'),
               ),
               ElevatedButton.icon(
                 onPressed: _openInWhatsapp,
