@@ -310,10 +310,10 @@ const RESOURCES = {
 "icons/icon-512.png": "d5b2195c83635f7e5bc84c65f4cdee45",
 "icons/icon-72.png": "dc09e758191420adefd5449b6b2352a5",
 "icons/icon-96.png": "0bc594fe44d8633d716c1933cfdacd70",
-"index.html": "8b1d6d8332d4768310a8bcb262b0c43f",
-"/": "8b1d6d8332d4768310a8bcb262b0c43f",
+"index.html": "05d2bbda4ed83f08e1a07286be7286f2",
+"/": "05d2bbda4ed83f08e1a07286be7286f2",
 "main.dart.js": "9c16b7eda40b3517795496c4cc2016bf",
-"manifest.json": "ab978841463afd0a777788f1a4d00e34",
+"manifest.json": "066dfc57d1bb1e85dd12116ed388d3ca",
 "screenshots/home.png": "aed03c3143438a1d7475aad43362fda7",
 "version.json": "385a1558df3f3daa573dc6e4b97e39e2"
 };
