@@ -10,14 +10,18 @@ tasks:
 ports:
   - port: 5900
     onOpen: ignore
-    # VNC
+    visibility: public
+    name: VNC Server
   - port: 6080
     onOpen: ignore
     visibility: public
-    # Flutter Web
+    name: VNC Client
+    description: noVNC web client
   - port: 8080
     onOpen: ignore
     visibility: public
+    name: Flutter Web
+    description: Where Flutter serves the web app
   - port: 9100
     onOpen: ignore
   - port: 9101
