@@ -26,6 +26,14 @@ ports:
     onOpen: ignore
   - port: 9101
     onOpen: ignore
+  - port: 49090
+    onOpen: ignore
+    visibility: public
+    name: Flutter DevTools
+  - port: 49191
+    onOpen: ignore
+    visibility: public
+    name: Flutter DDS
 
 vscode:
   extensions:
