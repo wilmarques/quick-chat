@@ -12,5 +12,11 @@
   },
   "cSpell.words": ["cupertino", "grey", "homescreen", "whatsapp"],
   "gitpod.experimental.portsView.enabled": true,
-  "dart.renameFilesWithClasses": "prompt"
+  "dart.renameFilesWithClasses": "prompt",
+  "vim.showMarksInGutter": true,
+  "vim.camelCaseMotion.enable": true,
+  "vim.easymotion": false,
+  "vim.smartRelativeLine": true,
+  "vim.sneak": true,
+  "vim.sneakUseIgnorecaseAndSmartcase": true
 }
