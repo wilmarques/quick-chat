@@ -3,8 +3,9 @@ image:
 
 tasks:
   - before: sudo mount -t tmpfs shm -osize=4096m /dev/shm
-  - init: |
-      flutter doctor
+  - name: Flutter env prep
+    before: |
+      # flutter doctor
       flutter pub get
 
 ports:
@@ -22,18 +23,12 @@ ports:
     visibility: public
     name: Flutter Web
     description: Where Flutter serves the web app
-  - port: 9100
+  - port: 9100-9101
     onOpen: ignore
-  - port: 9101
+  - port: 40000-50000
     onOpen: ignore
-  - port: 49090
-    onOpen: ignore
-    visibility: public
-    name: Flutter DevTools
-  - port: 49191
-    onOpen: ignore
-    visibility: public
-    name: Flutter DDS
+    # visibility: public
+    name: Flutter Internals
 
 vscode:
   extensions:
