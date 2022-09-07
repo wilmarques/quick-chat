@@ -21,4 +21,5 @@
   "vim.sneakUseIgnorecaseAndSmartcase": true,
   "dart.flutterHotReloadOnSave": "manual",
   "dart.flutterShowWebServerDevice": "always",
+  "git.autofetch": false,
 }
