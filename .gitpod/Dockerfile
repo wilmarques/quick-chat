@@ -2,49 +2,29 @@ FROM gitpod/workspace-full-vnc
 SHELL ["/bin/bash", "-c"]
 
 ############################################################
-######################### FLUTTER ##########################
-############################################################
-
-USER gitpod
-WORKDIR /home/gitpod
-
-ENV FLUTTER_VERSION=3.0.5
-RUN git clone https://github.com/flutter/flutter -b ${FLUTTER_VERSION} --depth=1
-
-ENV PATH="/home/gitpod/flutter/bin:$PATH"
-ENV PUB_CACHE="/workspace/.pub_cache"
-
-############################################################
 ######################### ANDROID ##########################
 ############################################################
 
-# DISABLED FOR NOW
+ENV ANDROID_HOME=$HOME/androidsdk
+ENV PATH="$ANDROID_HOME/emulator:$ANDROID_HOME/tools:$ANDROID_HOME/cmdline-tools/latest/bin:$ANDROID_HOME/platform-tools:$PATH"
 
-# ENV ANDROID_HOME=/home/gitpod/androidsdk
+# Install Open JDK for android and other dependencies
+USER root
+RUN install-packages openjdk-8-jdk -y \
+        libgtk-3-dev \
+        libnss3-dev \
+        fonts-noto \
+        fonts-noto-cjk \
+    && update-java-alternatives --set java-1.8.0-openjdk-amd64
 
-# # Install Open JDK
-# USER root
-# RUN apt update \
-#     && apt install openjdk-8-jdk -y \
-#     && update-java-alternatives --set java-1.8.0-openjdk-amd64
-
-# # Install SDK Manager
-# USER gitpod
-# RUN  wget https://dl.google.com/android/repository/commandlinetools-linux-7583922_latest.zip \
-#     && mkdir -p $ANDROID_HOME/cmdline-tools/latest \
-#     && unzip commandlinetools-linux-*.zip -d $ANDROID_HOME \
-#     && rm -f commandlinetools-linux-*.zip \
-#     && mv $ANDROID_HOME/cmdline-tools/bin $ANDROID_HOME/cmdline-tools/latest \
-#     && mv $ANDROID_HOME/cmdline-tools/lib $ANDROID_HOME/cmdline-tools/latest
-
-# RUN echo "export ANDROID_HOME=$ANDROID_HOME" >> /home/gitpod/.bashrc \
-#     && echo 'export PATH=$ANDROID_HOME/emulator:$ANDROID_HOME/tools:$ANDROID_HOME/cmdline-tools/bin:$ANDROID_HOME/platform-tools:$PATH' >> /home/gitpod/.bashrc
-
-# # Install Android Image version 30
-# USER gitpod
-# RUN yes | $ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager "platform-tools" "platforms;android-30" "emulator"
-# RUN yes | $ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager "system-images;android-30;google_apis;x86_64"
-# RUN echo no | $ANDROID_HOME/cmdline-tools/latest/bin/avdmanager create avd -n avd28 -k "system-images;android-30;google_apis;x86_64"
+# Install Android SDK Manager and Android 31
+USER gitpod
+RUN _file_name="commandlinetools-linux-8092744_latest.zip" && wget "https://dl.google.com/android/repository/$_file_name" \
+    && unzip "$_file_name" -d $ANDROID_HOME \
+    && rm -f "$_file_name" \
+    && mkdir -p $ANDROID_HOME/cmdline-tools/latest \
+    && mv $ANDROID_HOME/cmdline-tools/{bin,lib} $ANDROID_HOME/cmdline-tools/latest \
+    && yes | sdkmanager "platform-tools" "build-tools;31.0.0" "platforms;android-31"
 
 ############################################################
 ############################ WEB ###########################
@@ -60,16 +40,28 @@ RUN apt-get update \
   && sudo apt-get install -y google-chrome-stable
 
 ############################################################
-########################### MISC ###########################
+######################### FLUTTER ##########################
 ############################################################
 
-# misc deps
-RUN apt-get install -y \
-  libasound2-dev \
-  libgtk-3-dev \
-  libnss3-dev \
-  fonts-noto \
-  fonts-noto-cjk
+USER gitpod
+WORKDIR /home/gitpod
+
+ENV FLUTTER_VERSION=3.0.5
+RUN git clone https://github.com/flutter/flutter -b ${FLUTTER_VERSION} --depth=1
+
+ENV PATH="$HOME/flutter/bin:$PATH"
+ENV PUB_CACHE="/workspace/.pub_cache"
+
+# Enable Flutter Web, Android and Linux Desktop
+# Also doing precache, to increase workspace init
+RUN flutter precache && for _plat in web linux-desktop; do flutter config --enable-${_plat}; done \
+  && flutter config --android-sdk $ANDROID_HOME \
+  && yes | flutter doctor --android-licenses \
+  && flutter doctor
+
+############################################################
+########################### MISC ###########################
+############################################################
 
 # For Qt WebEngine on docker
 ENV QTWEBENGINE_DISABLE_SANDBOX 1

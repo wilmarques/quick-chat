@@ -18,5 +18,7 @@
   "vim.easymotion": false,
   "vim.smartRelativeLine": true,
   "vim.sneak": true,
-  "vim.sneakUseIgnorecaseAndSmartcase": true
+  "vim.sneakUseIgnorecaseAndSmartcase": true,
+  "dart.flutterHotReloadOnSave": "manual",
+  "dart.flutterShowWebServerDevice": "always",
 }
