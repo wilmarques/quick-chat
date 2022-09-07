@@ -41,9 +41,9 @@ class _HomePageState extends State<HomePage> {
       },
     );
 
-    if (await canLaunchUrl(whatsAppUri)) {
+    try {
       await launchUrl(whatsAppUri);
-    } else {
+    } catch (exception) {
       throw 'Could not launch $whatsAppUri';
     }
   }

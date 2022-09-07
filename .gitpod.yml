@@ -21,13 +21,14 @@ ports:
     onOpen: ignore
     visibility: public
     name: Flutter Web
-    description: Where Flutter serves the web app
   - port: 9100-9101
     onOpen: ignore
   - port: 40000-50000
     onOpen: ignore
-# visibility: public
     name: Flutter Internals
+  - port: 5037
+    onOpen: ignore
+    name: ADB
 
 vscode:
   extensions:
@@ -35,3 +36,4 @@ vscode:
     - dart-code.dart-code
     - editorconfig.editorconfig
     - ms-azuretools.vscode-docker
+    - redhat.vscode-xml
