@@ -19,16 +19,21 @@ ports:
     description: noVNC web client
   - port: 8080
     onOpen: ignore
-    visibility: public
     name: Flutter Web
+    visibility: public
   - port: 9100-9101
     onOpen: ignore
+    # visibility: public
   - port: 40000-50000
     onOpen: ignore
     name: Flutter Internals
+    visibility: public
   - port: 5037
     onOpen: ignore
     name: ADB
+  - port: 6000
+    onOpen: ignore
+    name: Appetize SSH Tunnel
 
 vscode:
   extensions:

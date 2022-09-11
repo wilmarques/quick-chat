@@ -32,13 +32,13 @@ class _HomePageState extends State<HomePage> {
   }
 
   void _openInWhatsapp() async {
+
     final whatsAppUri = Uri(
-      scheme: 'https',
-      host: 'api.whatsapp.com',
-      path: 'send',
+      scheme: 'whatsapp',
+      host: 'send',
       queryParameters: {
         'phone': _parseCompleteNumber(),
-      },
+      }
     );
 
     try {
