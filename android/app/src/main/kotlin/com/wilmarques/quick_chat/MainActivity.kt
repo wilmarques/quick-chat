@@ -1,4 +1,4 @@
-package com.example.quick_chat
+package com.wilmarques.quick_chat
 
 import io.flutter.embedding.android.FlutterActivity
 
