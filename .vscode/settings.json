@@ -25,4 +25,5 @@
   "vim.hlsearch": true,
   "vim.overrideCopy": true,
   "vim.highlightedyank.enable": true,
+  "git.autorefresh": false,
 }
