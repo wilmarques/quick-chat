@@ -3,8 +3,6 @@
     "dart-code.flutter",
     "dart-code.dart-code",
     "editorconfig.editorconfig",
-    "ms-azuretools.vscode-docker",
-    "redhat.vscode-xml",
-    "vscodevim.vim"
+    "ms-azuretools.vscode-docker"
   ]
 }

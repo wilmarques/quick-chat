@@ -40,5 +40,3 @@ vscode:
     - dart-code.dart-code
     - editorconfig.editorconfig
     - ms-azuretools.vscode-docker
-    - redhat.vscode-xml
-    - vscodevim.vim
