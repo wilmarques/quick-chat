@@ -4,6 +4,7 @@
     "dart-code.dart-code",
     "editorconfig.editorconfig",
     "ms-azuretools.vscode-docker",
-    "redhat.vscode-xml"
+    "redhat.vscode-xml",
+    "vscodevim.vim"
   ]
 }
