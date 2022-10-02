@@ -32,14 +32,9 @@ class _HomePageState extends State<HomePage> {
   }
 
   void _openInWhatsapp() async {
-
-    final whatsAppUri = Uri(
-      scheme: 'whatsapp',
-      host: 'send',
-      queryParameters: {
-        'phone': _parseCompleteNumber(),
-      }
-    );
+    final whatsAppUri = Uri(scheme: 'whatsapp', host: 'send', queryParameters: {
+      'phone': _parseCompleteNumber(),
+    });
 
     try {
       await launchUrl(whatsAppUri);
@@ -52,40 +47,38 @@ class _HomePageState extends State<HomePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: Colors.transparent,
-        elevation: 0,
+        title: const Text('Quick Chat'),
       ),
-      backgroundColor: Colors.white,
-      body: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 40),
-        child: Form(
-          key: formKey,
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.center,
-            mainAxisAlignment: MainAxisAlignment.start,
-            children: [
-              const Text(
-                'Welcome to Quick Chat!',
-                style: TextStyle(
-                  fontSize: 30,
-                  color: Colors.black,
+      body: SafeArea(
+        child: ListView(
+          padding: const EdgeInsets.symmetric(horizontal: 24.0),
+          children: <Widget>[
+            const SizedBox(height: 60.0),
+            PhoneFormField(
+              autofocus: true,
+              controller: _phoneNumberController,
+              decoration: const InputDecoration(
+                labelText: 'Enter Phone Numer',
+              ),
+            ),
+            const SizedBox(height: 40.0),
+            Column(
+              children: [
+                ElevatedButton.icon(
+                  onPressed: _openInWhatsapp,
+                  icon: const Icon(Icons.whatsapp, size: 18),
+                  label: const Text('Open in WhatsApp'),
+                  style: ElevatedButton.styleFrom(
+                    elevation: 8.0,
+                  ),
                 ),
-              ),
-              PhoneFormField(
-                controller: _phoneNumberController,
-              ),
-              ElevatedButton.icon(
-                onPressed: _pasteFromClipboard,
-                icon: const Icon(Icons.paste, size: 18),
-                label: const Text('Paste'),
-              ),
-              ElevatedButton.icon(
-                onPressed: _openInWhatsapp,
-                icon: const Icon(Icons.whatsapp, size: 18),
-                label: const Text('Open in WhatsApp'),
-              ),
-            ],
-          ),
+                TextButton(
+                  onPressed: _pasteFromClipboard,
+                  child: const Text('Paste'),
+                ),
+              ],
+            ),
+          ],
         ),
       ),
     );
