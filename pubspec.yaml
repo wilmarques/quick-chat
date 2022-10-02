@@ -54,15 +54,15 @@ dev_dependencies:
 flutter_icons:
   android: "launcher_icon"
   ios: false
-  image_path: "assets/icon-512.png"
+  image_path: "assets/icons/icon-512.png"
   adaptive_icon_background: "#25d366"
-  adaptive_icon_foreground: "assets/icon-512.png"
+  adaptive_icon_foreground: "assets/icons/icon-512.png"
   min_sdk_android: 21
   web:
-    generate: false
-    # image_path: "assets/icon-512.png"
-    # background_color: "#hexcode"
-    # theme_color: "#hexcode"
+    generate: true
+    image_path: "assets/icons/icon-512.png"
+    background_color: "#25d366"
+    theme_color: "#25d366"
 
 # The following section is specific to Flutter.
 flutter:
