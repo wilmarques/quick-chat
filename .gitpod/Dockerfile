@@ -46,8 +46,8 @@ RUN apt-get update \
 USER gitpod
 WORKDIR /home/gitpod
 
-ENV FLUTTER_VERSION=3.0.5
-RUN git clone https://github.com/flutter/flutter -b ${FLUTTER_VERSION} --depth=1
+ENV FLUTTER_VERSION=3.3.4
+RUN git clone https://github.com/flutter/flutter -b ${FLUTTER_VERSION}
 
 ENV PATH="$HOME/flutter/bin:$PATH"
 ENV PUB_CACHE="/workspace/.pub_cache"
