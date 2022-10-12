@@ -14,8 +14,9 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> {
   final formKey = GlobalKey<FormState>();
 
-  final _phoneNumberController = PhoneController(PhoneNumber.fromIsoCode(
-      IsoCode.values.byName(ui.window.locale.countryCode ?? 'US'), ''));
+  final _phoneNumberController = PhoneController(PhoneNumber(
+      isoCode: IsoCode.values.byName(ui.window.locale.countryCode ?? 'US'),
+      nsn: ''));
 
   String _parseCompleteNumber() {
     final parsedNumber = _phoneNumberController.value?.international ?? '';
@@ -25,8 +26,10 @@ class _HomePageState extends State<HomePage> {
   void _pasteFromClipboard() {
     FlutterClipboard.paste().then((value) {
       setState(() {
-        _phoneNumberController.value = PhoneNumber.fromIsoCode(
-            IsoCode.values.byName(ui.window.locale.countryCode ?? 'US'), value);
+        _phoneNumberController.value = PhoneNumber(
+            isoCode:
+                IsoCode.values.byName(ui.window.locale.countryCode ?? 'US'),
+            nsn: '');
       });
     });
   }
