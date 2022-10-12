@@ -26,10 +26,9 @@ class _HomePageState extends State<HomePage> {
   void _pasteFromClipboard() {
     FlutterClipboard.paste().then((value) {
       setState(() {
-        _phoneNumberController.value = PhoneNumber(
-            isoCode:
-                IsoCode.values.byName(ui.window.locale.countryCode ?? 'US'),
-            nsn: '');
+        _phoneNumberController.value = PhoneNumber.parse(value,
+            callerCountry:
+                IsoCode.values.byName(ui.window.locale.countryCode ?? 'US'));
       });
     });
   }
