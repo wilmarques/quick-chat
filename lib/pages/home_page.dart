@@ -1,8 +1,9 @@
-import 'package:clipboard/clipboard.dart';
 import 'package:flutter/material.dart';
 import 'package:phone_form_field/phone_form_field.dart';
-import 'package:url_launcher/url_launcher.dart';
 import 'dart:ui' as ui;
+
+import '../utils/clipboard_handler.dart';
+import '../utils/link_opener.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({Key? key}) : super(key: key);
@@ -13,35 +14,40 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   final formKey = GlobalKey<FormState>();
+  final linkOpener = const LinkOpener();
+  final clipboardHandler = const ClipboardHandler();
 
   final _phoneNumberController = PhoneController(PhoneNumber(
       isoCode: IsoCode.values.byName(ui.window.locale.countryCode ?? 'US'),
       nsn: ''));
 
-  String _parseCompleteNumber() {
-    final parsedNumber = _phoneNumberController.value?.international ?? '';
-    return parsedNumber;
-  }
-
-  void _pasteFromClipboard() {
-    FlutterClipboard.paste().then((value) {
+  void _pasteFromClipboard() async {
+    try {
+      final clipboardValue = await clipboardHandler.paste();
       setState(() {
-        _phoneNumberController.value = PhoneNumber.parse(value,
+        _phoneNumberController.value = PhoneNumber.parse(clipboardValue,
             callerCountry:
                 IsoCode.values.byName(ui.window.locale.countryCode ?? 'US'));
       });
-    });
+    } catch (exception) {
+      throw 'Could not read from clipboard';
+    }
   }
 
   void _openInWhatsapp() async {
-    final whatsAppUri = Uri(scheme: 'whatsapp', host: 'send', queryParameters: {
-      'phone': _parseCompleteNumber(),
-    });
+    final phone = _phoneNumberController.value?.international;
+    _openPhoneOnTarget(phone, LinkOpenerTarget.whatsapp);
+  }
 
+  void _openPhoneOnTarget(String? phone, LinkOpenerTarget target) async {
     try {
-      await launchUrl(whatsAppUri);
+      await linkOpener.openLink(
+        link: phone,
+        target: target,
+      );
     } catch (exception) {
-      throw 'Could not launch $whatsAppUri';
+      // TODO: Handle exception and give visual feedback to users
+      throw 'Could not launch $phone';
     }
   }
 
