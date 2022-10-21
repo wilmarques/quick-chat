@@ -100,7 +100,7 @@ packages:
     source: hosted
     version: "1.0.5"
   dart_countries:
-    dependency: transitive
+    dependency: "direct main"
     description:
       name: dart_countries
       url: "https://pub.dartlang.org"

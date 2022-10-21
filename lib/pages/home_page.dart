@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:phone_form_field/phone_form_field.dart';
-import 'dart:ui' as ui;
 
 import '../utils/clipboard_handler.dart';
 import '../utils/link_opener.dart';
+import '../utils/phone_utils.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({Key? key}) : super(key: key);
@@ -14,20 +14,19 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   final formKey = GlobalKey<FormState>();
-  final linkOpener = const LinkOpener();
-  final clipboardHandler = const ClipboardHandler();
 
-  final _phoneNumberController = PhoneController(PhoneNumber(
-      isoCode: IsoCode.values.byName(ui.window.locale.countryCode ?? 'US'),
-      nsn: ''));
+  final _linkOpener = const LinkOpener();
+  final _clipboardHandler = const ClipboardHandler();
+  final _phoneUtils = const PhoneUtils();
+
+  late PhoneController _phoneNumberController;
 
   void _pasteFromClipboard() async {
     try {
-      final clipboardValue = await clipboardHandler.paste();
+      final clipboardValue = await _clipboardHandler.paste();
       setState(() {
         _phoneNumberController.value = PhoneNumber.parse(clipboardValue,
-            callerCountry:
-                IsoCode.values.byName(ui.window.locale.countryCode ?? 'US'));
+            callerCountry: _phoneUtils.currentIsoCode());
       });
     } catch (exception) {
       throw 'Could not read from clipboard';
@@ -41,7 +40,7 @@ class _HomePageState extends State<HomePage> {
 
   void _openPhoneOnTarget(String? phone, LinkOpenerTarget target) async {
     try {
-      await linkOpener.openLink(
+      await _linkOpener.openLink(
         link: phone,
         target: target,
       );
@@ -49,6 +48,13 @@ class _HomePageState extends State<HomePage> {
       // TODO: Handle exception and give visual feedback to users
       throw 'Could not launch $phone';
     }
+  }
+
+  @override
+  initState() {
+    super.initState();
+    _phoneNumberController = PhoneController(
+        PhoneNumber(isoCode: _phoneUtils.currentIsoCode(), nsn: ''));
   }
 
   @override
