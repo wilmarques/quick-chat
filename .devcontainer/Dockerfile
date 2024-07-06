@@ -1,32 +1,90 @@
-# See here for image contents: https://github.com/microsoft/vscode-dev-containers/tree/v0.238.1/containers/debian/.devcontainer/base.Dockerfile
+FROM mcr.microsoft.com/devcontainers/universal:2-linux
 
-# [Choice] Debian version (use bullseye on local arm64/Apple Silicon): bullseye, buster
-ARG VARIANT="buster"
-FROM mcr.microsoft.com/vscode/devcontainers/base:0-${VARIANT}
+ARG USERNAME=${USERNAME:-"codespace"}
 
-USER vscode
-WORKDIR /home/vscode
+ENV TOOLS_HOME=/usr/local
 
-ENV FLUTTER_VERSION=3.0.5
-RUN git clone https://github.com/flutter/flutter -b ${FLUTTER_VERSION} --depth=1
+############################################################
+########################## LINUX ###########################
+############################################################
 
-ENV PATH="/home/vscode/flutter/bin:$PATH"
-ENV PUB_CACHE="/workspaces/.pub_cache"
+USER root
+
+RUN apt update \
+  && apt install -y cmake libgtk-3-dev ninja-build
+
+############################################################
+######################### ANDROID ##########################
+############################################################
+
+USER root
+
+ENV ANDROID_HOME=$TOOLS_HOME/androidsdk
+ENV PATH="$ANDROID_HOME/emulator:$ANDROID_HOME/tools:$ANDROID_HOME/cmdline-tools/latest/bin:$ANDROID_HOME/platform-tools:$PATH"
+
+# Install Android SDK Manager and Android 31
+RUN _file_name="commandlinetools-linux-8092744_latest.zip" \
+  && wget "https://dl.google.com/android/repository/$_file_name" \
+  && unzip "$_file_name" -d $ANDROID_HOME \
+  && rm -f "$_file_name"
+
+# Give remote user ownership of ANDROID_HOME
+RUN chown -R ${USERNAME} $ANDROID_HOME
+
+# Move Android Tools to latest dir
+USER $USERNAME
+RUN mkdir -p $ANDROID_HOME/cmdline-tools/latest \
+  && mv $ANDROID_HOME/cmdline-tools/bin $ANDROID_HOME/cmdline-tools/latest \
+  && mv $ANDROID_HOME/cmdline-tools/lib $ANDROID_HOME/cmdline-tools/latest \
+  && yes | sdkmanager "platform-tools" "build-tools;31.0.0" "platforms;android-31"
+
 ############################################################
 ############################ WEB ###########################
 ############################################################
 
-# Install Google Chrome
 USER root
-RUN apt-get update \
-  && apt-get install -y apt-transport-https \
+
+# Install Google Chrome
+RUN apt install -y apt-transport-https \
   && curl -sSL https://dl.google.com/linux/linux_signing_key.pub | apt-key add - \
   && echo "deb [arch=amd64] https://dl.google.com/linux/chrome/deb/ stable main" > /etc/apt/sources.list.d/google-chrome.list \
-  && apt-get update \
-  && sudo apt-get install -y google-chrome-stable
+  && apt update \
+  && apt install -y google-chrome-stable
 
-# TODO: Chrome is crashing
-# [0731/121628.405381:ERROR:file_io_posix.cc(144)] open /sys/devices/system/cpu/cpu0/cpufreq/scaling_cur_freq: No such file or directory (2)
-# [0731/121628.405460:ERROR:file_io_posix.cc(144)] open /sys/devices/system/cpu/cpu0/cpufreq/scaling_max_freq: No such file or directory (2)
-# This SO answer (https://stackoverflow.com/a/71203432/1683224) says it crashes because it can't connect to a GUI
-# Maybe see what Gitpod team has done may help
+# Install Microsoft Edge
+RUN curl https://packages.microsoft.com/keys/microsoft.asc | gpg --dearmor > microsoft.gpg \
+  && install -o root -g root -m 644 microsoft.gpg /usr/share/keyrings/ \
+  && sh -c 'echo "deb [arch=amd64 signed-by=/usr/share/keyrings/microsoft.gpg] https://packages.microsoft.com/repos/edge stable main" > /etc/apt/sources.list.d/microsoft-edge-dev.list' \
+  && rm microsoft.gpg \
+  && apt update \
+  && apt install microsoft-edge-dev
+
+############################################################
+######################### FLUTTER ##########################
+############################################################
+
+USER root
+
+ENV FLUTTER_HOME=$TOOLS_HOME/flutter
+ENV FLUTTER_VERSION=3.0.5
+ENV FLUTTER_GIT_URL=https://github.com/flutter/flutter
+
+# Create FLUTTER_HOME dir
+RUN mkdir -p $FLUTTER_HOME
+# Give remote user ownership of FLUTTER_HOME
+RUN chown -R ${USERNAME} $FLUTTER_HOME
+
+# Switch to remote user
+USER ${USERNAME}
+# Clone Flutter into FLUTTER_HOME
+RUN git clone ${FLUTTER_GIT_URL} -b $FLUTTER_VERSION $FLUTTER_HOME
+
+ENV PATH="$FLUTTER_HOME/bin:$PATH"
+ENV PUB_CACHE=$FLUTTER_HOME/.pub_cache
+
+# Enable Flutter Web, Android and Linux Desktop
+# Also doing precache, to increase workspace init
+RUN flutter precache && for _plat in web linux-desktop; do flutter config --enable-${_plat}; done \
+  && flutter config --android-sdk $ANDROID_HOME \
+  && yes | flutter doctor --android-licenses \
+  && flutter doctor
