@@ -53,8 +53,9 @@ class _HomePageState extends State<HomePage> {
   @override
   initState() {
     super.initState();
-    _phoneNumberController = PhoneController(
-        PhoneNumber(isoCode: _phoneUtils.currentIsoCode(), nsn: ''));
+    var phoneNumber =
+        PhoneNumber(isoCode: _phoneUtils.currentIsoCode(), nsn: '');
+    _phoneNumberController = PhoneController(initialValue: phoneNumber);
   }
 
   @override
@@ -80,7 +81,7 @@ class _HomePageState extends State<HomePage> {
               children: [
                 ElevatedButton.icon(
                   onPressed: _openInWhatsapp,
-                  icon: const Icon(Icons.whatsapp, size: 18),
+                  icon: const Icon(Icons.chat, size: 18),
                   label: const Text('Open in WhatsApp'),
                   style: ElevatedButton.styleFrom(
                     elevation: 8.0,

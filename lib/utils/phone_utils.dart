@@ -1,13 +1,14 @@
-import 'package:dart_countries/dart_countries.dart';
-import 'dart:ui' as ui;
+import 'package:phone_form_field/phone_form_field.dart';
+
+import 'package:flutter/widgets.dart';
 
 class PhoneUtils {
   const PhoneUtils();
 
   IsoCode currentIsoCode() {
     const defaultCountryCode = 'US';
-    final detectedCountryCode = ui.window.locale.countryCode;
-    return IsoCode.values
-        .byName(detectedCountryCode ?? defaultCountryCode);
+    final detectedCountryCode =
+        WidgetsBinding.instance.platformDispatcher.locale.countryCode;
+    return IsoCode.values.byName(detectedCountryCode ?? defaultCountryCode);
   }
 }
