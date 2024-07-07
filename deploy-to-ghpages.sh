@@ -1,6 +1,9 @@
-git subtree add --prefix build/web origin gh-pages
 flutter build web --base-href /quick-chat/
-git add -f build/web
+cd build/web
+git init
+git remote add gh-pages https://github.com/wilmarques/quick-chat.git
+git fetch --all
+git add -A
 git commit -m "ci: Deploying"
-git subtree push --prefix build/web origin gh-pages
-git reset HEAD~2 --hard
+git checkout -b gh-pages
+git push gh-pages gh-pages
