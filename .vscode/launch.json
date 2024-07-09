@@ -18,6 +18,8 @@
         // "--dds-port", "35000" // Not working currently - It's Flutter Web bug (issue #84179)
         // "--host-vmservice-port", "35000"
         // "--device-vmservice-port", "35000"
+        "--observatory-port",
+        "51000"
       ]
     },
     {
