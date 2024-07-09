@@ -18,4 +18,5 @@
     "homescreen",
     "whatsapp"
   ],
+  "java.configuration.updateBuildConfiguration": "interactive",
 }

@@ -5,6 +5,7 @@
     "ms-azuretools.vscode-docker",
     "redhat.java",
     "vscjava.vscode-java-debug",
-    "editorconfig.editorconfig"
+    "editorconfig.editorconfig",
+    "vscjava.vscode-gradle"
   ]
 }

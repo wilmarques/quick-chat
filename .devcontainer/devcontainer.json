@@ -53,7 +53,8 @@
         "ms-azuretools.vscode-docker",
         "redhat.java",
         "vscjava.vscode-java-debug",
-        "DavidAnson.vscode-markdownlint"
+        "DavidAnson.vscode-markdownlint",
+        "vscjava.vscode-gradle"
       ]
     }
   },
