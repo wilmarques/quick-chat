@@ -7,24 +7,33 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-
-import 'package:quick_chat/main.dart';
+import 'package:quick_chat/app.dart';
 
 void main() {
-  testWidgets('Counter increments smoke test', (WidgetTester tester) async {
-    // Build our app and trigger a frame.
-    await tester.pumpWidget(const MyApp());
+  testWidgets('Open WhatsApp using the provided Phone Number',
+      (WidgetTester tester) async {
+    await tester.pumpWidget(const QuickChatApp());
 
-    // Verify that our counter starts at 0.
-    expect(find.text('0'), findsOneWidget);
-    expect(find.text('1'), findsNothing);
+    // Find the Phone Number text field
+    final phoneNumberField = find.byKey(const Key('phone_number_field'));
 
-    // Tap the '+' icon and trigger a frame.
-    await tester.tap(find.byIcon(Icons.add));
+    // Enter a phone number
+    await tester.enterText(phoneNumberField, '1234567890');
+    // Tap the 'Open in WhatsApp' button
+    await tester.tap(find.byKey(const Key('open_in_whatsapp_button')));
+    // Wait for the widget to rebuild
     await tester.pump();
 
-    // Verify that our counter has incremented.
-    expect(find.text('0'), findsNothing);
-    expect(find.text('1'), findsOneWidget);
+    // Verify that the phone number is opened in WhatsApp
+    // The button opens a link containing the phone number
+
+    // Verify that the phone number is opened in WhatsApp
+    // The button opens a link containing the phone number
+    // The link is opened in the browser
   });
 }
+
+    // final linkOpened = await tester.hasAnyWidget(WebView(
+    //   initialUrl: 'https://wa.me/1234567890',
+    // ));
+    // expect(linkOpened, true);

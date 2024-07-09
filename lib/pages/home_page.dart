@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:phone_form_field/phone_form_field.dart';
 
 import '../utils/clipboard_handler.dart';
@@ -34,7 +35,7 @@ class _HomePageState extends State<HomePage> {
   }
 
   void _openInWhatsapp() async {
-    final phone = _phoneNumberController.value?.international;
+    final phone = _phoneNumberController.value.international;
     _openPhoneOnTarget(phone, LinkOpenerTarget.whatsapp);
   }
 
@@ -70,6 +71,7 @@ class _HomePageState extends State<HomePage> {
           children: <Widget>[
             const SizedBox(height: 60.0),
             PhoneFormField(
+              key: const Key('phone_number_field'),
               autofocus: true,
               controller: _phoneNumberController,
               decoration: const InputDecoration(
@@ -80,8 +82,9 @@ class _HomePageState extends State<HomePage> {
             Column(
               children: [
                 ElevatedButton.icon(
+                  key: const Key('open_in_whatsapp_button'),
                   onPressed: _openInWhatsapp,
-                  icon: const Icon(Icons.chat, size: 18),
+                  icon: const Icon(FontAwesomeIcons.whatsapp, size: 18),
                   label: const Text('Open in WhatsApp'),
                   style: ElevatedButton.styleFrom(
                     elevation: 8.0,
