@@ -9,10 +9,10 @@ class PhoneUtils {
     const defaultCountryCode = IsoCode.US;
     // Detect the device IsoCode, based on its locale settings
     final deviceLocale = WidgetsBinding.instance.platformDispatcher.locale;
-    final deviceLanguageCode = deviceLocale.languageCode.toUpperCase();
+    final deviceCountryCode = deviceLocale.countryCode;
     // Return the device IsoCode, or the default one (US) if not found
     final identifiedIsoCode = IsoCode.values.firstWhere(
-      (isoCode) => isoCode.name == deviceLanguageCode,
+      (isoCode) => isoCode.name == deviceCountryCode,
       orElse: () => defaultCountryCode,
     );
     return identifiedIsoCode;
