@@ -14,7 +14,9 @@
         "--web-browser-flag",
         "--auto-open-devtools-for-tabs",
         "--web-browser-flag",
-        "--start-maximized"
+        "--start-maximized",
+        "--device-timeout",
+        "20"
       ]
     },
     {
