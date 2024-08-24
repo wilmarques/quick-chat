@@ -5,7 +5,7 @@ import 'theme.dart';
 import 'pages/home_page.dart';
 
 class QuickChatApp extends StatelessWidget {
-  const QuickChatApp({Key? key}) : super(key: key);
+  const QuickChatApp({super.key});
 
   @override
   Widget build(BuildContext context) {
