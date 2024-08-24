@@ -31,12 +31,12 @@ RUN _file_name="commandlinetools-linux-11076708_latest.zip" \
 # Give remote user ownership of ANDROID_HOME
 RUN chown -R ${USERNAME} $ANDROID_HOME
 
-# Move Android Tools to latest dir and intsall Android 33 packages
+# Move Android Tools to latest dir and intsall Android packages
 USER $USERNAME
 RUN mkdir -p $ANDROID_HOME/cmdline-tools/latest \
   && mv $ANDROID_HOME/cmdline-tools/bin $ANDROID_HOME/cmdline-tools/latest \
   && mv $ANDROID_HOME/cmdline-tools/lib $ANDROID_HOME/cmdline-tools/latest \
-  && yes | sdkmanager "platform-tools" "build-tools;33.0.3" "platforms;android-33"
+  && yes | sdkmanager "platform-tools" "build-tools;34.0.0" "platforms;android-34"
 
 ############################################################
 ############################ WEB ###########################

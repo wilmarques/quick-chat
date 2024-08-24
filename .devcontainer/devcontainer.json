@@ -19,17 +19,15 @@
       "azureDnsAutoDetection": true,
       "installDockerBuildx": true,
       "version": "latest",
-      "dockerDashComposeVersion": "v2"
+      "dockerDashComposeVersion": "latest"
     },
     "ghcr.io/devcontainers/features/github-cli:1": {
       "installDirectlyFromGitHubRelease": true,
       "version": "latest"
     },
     "ghcr.io/devcontainers/features/java:1": {
-      "version": "11",
-      "jdkDistro": "ms",
-      "installGradle": true,
-      "gradleVersion": "latest"
+      "version": "17",
+      "jdkDistro": "ms"
     },
     "ghcr.io/devcontainers/features/sshd:1": {
       "version": "latest"

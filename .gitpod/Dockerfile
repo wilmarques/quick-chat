@@ -9,15 +9,15 @@ ENV ANDROID_HOME=$HOME/androidsdk
 ENV PATH="$ANDROID_HOME/emulator:$ANDROID_HOME/tools:$ANDROID_HOME/cmdline-tools/latest/bin:$ANDROID_HOME/platform-tools:$PATH"
 
 # Install Open JDK for android and other dependencies
-# TODO: Changed to Java 11, but tests were not done
+# TODO: Changed to Java 17, but tests were not done
 USER root
-RUN install-packages openjdk-11-jdk -y \
+RUN install-packages openjdk-17-jdk -y \
   libgtk-3-dev \
   libnss3-dev \
   fonts-noto \
   fonts-noto-cjk
 
-# Install Android SDK Manager and Android 33 packages
+# Install Android SDK Manager and Android packages
 USER gitpod
 RUN _file_name="commandlinetools-linux-11076708_latest.zip" \
   && wget "https://dl.google.com/android/repository/$_file_name" \
@@ -25,7 +25,7 @@ RUN _file_name="commandlinetools-linux-11076708_latest.zip" \
   && rm -f "$_file_name" \
   && mkdir -p $ANDROID_HOME/cmdline-tools/latest \
   && mv $ANDROID_HOME/cmdline-tools/{bin,lib} $ANDROID_HOME/cmdline-tools/latest \
-  && yes | sdkmanager "platform-tools" "build-tools;33.0.3" "platforms;android-33"
+  && yes | sdkmanager "platform-tools" "build-tools;34.0.0" "platforms;android-34"
 
 ############################################################
 ############################ WEB ###########################
