@@ -9,22 +9,23 @@ ENV ANDROID_HOME=$HOME/androidsdk
 ENV PATH="$ANDROID_HOME/emulator:$ANDROID_HOME/tools:$ANDROID_HOME/cmdline-tools/latest/bin:$ANDROID_HOME/platform-tools:$PATH"
 
 # Install Open JDK for android and other dependencies
+# TODO: Changed to Java 11, but tests were not done
 USER root
-RUN install-packages openjdk-8-jdk -y \
-        libgtk-3-dev \
-        libnss3-dev \
-        fonts-noto \
-        fonts-noto-cjk \
-    && update-java-alternatives --set java-1.8.0-openjdk-amd64
+RUN install-packages openjdk-11-jdk -y \
+  libgtk-3-dev \
+  libnss3-dev \
+  fonts-noto \
+  fonts-noto-cjk
 
-# Install Android SDK Manager and Android 31
+# Install Android SDK Manager and Android 33 packages
 USER gitpod
-RUN _file_name="commandlinetools-linux-8092744_latest.zip" && wget "https://dl.google.com/android/repository/$_file_name" \
-    && unzip "$_file_name" -d $ANDROID_HOME \
-    && rm -f "$_file_name" \
-    && mkdir -p $ANDROID_HOME/cmdline-tools/latest \
-    && mv $ANDROID_HOME/cmdline-tools/{bin,lib} $ANDROID_HOME/cmdline-tools/latest \
-    && yes | sdkmanager "platform-tools" "build-tools;31.0.0" "platforms;android-31"
+RUN _file_name="commandlinetools-linux-11076708_latest.zip" \
+  && wget "https://dl.google.com/android/repository/$_file_name" \
+  && unzip "$_file_name" -d $ANDROID_HOME \
+  && rm -f "$_file_name" \
+  && mkdir -p $ANDROID_HOME/cmdline-tools/latest \
+  && mv $ANDROID_HOME/cmdline-tools/{bin,lib} $ANDROID_HOME/cmdline-tools/latest \
+  && yes | sdkmanager "platform-tools" "build-tools;33.0.3" "platforms;android-33"
 
 ############################################################
 ############################ WEB ###########################

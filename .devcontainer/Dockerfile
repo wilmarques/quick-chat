@@ -22,8 +22,8 @@ USER root
 ENV ANDROID_HOME=$TOOLS_HOME/androidsdk
 ENV PATH="$ANDROID_HOME/emulator:$ANDROID_HOME/tools:$ANDROID_HOME/cmdline-tools/latest/bin:$ANDROID_HOME/platform-tools:$PATH"
 
-# Install Android SDK Manager and Android 31
-RUN _file_name="commandlinetools-linux-8092744_latest.zip" \
+# Install Android SDK Manager
+RUN _file_name="commandlinetools-linux-11076708_latest.zip" \
   && wget "https://dl.google.com/android/repository/$_file_name" \
   && unzip "$_file_name" -d $ANDROID_HOME \
   && rm -f "$_file_name"
@@ -31,12 +31,12 @@ RUN _file_name="commandlinetools-linux-8092744_latest.zip" \
 # Give remote user ownership of ANDROID_HOME
 RUN chown -R ${USERNAME} $ANDROID_HOME
 
-# Move Android Tools to latest dir
+# Move Android Tools to latest dir and intsall Android 33 packages
 USER $USERNAME
 RUN mkdir -p $ANDROID_HOME/cmdline-tools/latest \
   && mv $ANDROID_HOME/cmdline-tools/bin $ANDROID_HOME/cmdline-tools/latest \
   && mv $ANDROID_HOME/cmdline-tools/lib $ANDROID_HOME/cmdline-tools/latest \
-  && yes | sdkmanager "platform-tools" "build-tools;31.0.0" "platforms;android-31"
+  && yes | sdkmanager "platform-tools" "build-tools;33.0.3" "platforms;android-33"
 
 ############################################################
 ############################ WEB ###########################
@@ -66,7 +66,7 @@ RUN curl https://packages.microsoft.com/keys/microsoft.asc | gpg --dearmor > mic
 USER root
 
 ENV FLUTTER_HOME=$TOOLS_HOME/flutter
-ENV FLUTTER_VERSION=3.0.5
+ENV FLUTTER_VERSION=3.24.0
 ENV FLUTTER_GIT_URL=https://github.com/flutter/flutter
 
 # Create FLUTTER_HOME dir
