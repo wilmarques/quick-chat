@@ -1,8 +1,7 @@
 <!DOCTYPE html>
-<html lang="pt-br">
+<html>
 
 <head>
-
   <base href="$FLUTTER_BASE_HREF">
 
   <meta charset="UTF-8">
@@ -25,18 +24,10 @@
 
   <title>Quick Chat</title>
   <link rel="manifest" href="manifest.json">
-
-  <script>
-    // The value below is injected by flutter build, do not touch.
-    var serviceWorkerVersion = null;
-  </script>
-  <!-- This script adds the flutter initialization JS code -->
-  <script src="flutter.js" defer></script>
 </head>
 
 <body>
-
-  <div id="loading">
+    <div id="loading">
     <style>
       body {
         inset: 0;
@@ -86,29 +77,26 @@
     <img src="icons/Icon-512.png" alt="Loading ..." />
   </div>
 
-  <!-- This script installs service_worker.js to provide PWA functionality to
-       application. For more information, see:
-       https://developers.google.com/web/fundamentals/primers/service-workers -->
   <script>
-    window.addEventListener('load', function () {
-      var loading = document.querySelector('#loading');
-      _flutter.loader.loadEntrypoint({
-        serviceWorker: {
-          serviceWorkerVersion: serviceWorkerVersion,
-        }
-      }).then(function (engineInitializer) {
+    {{flutter_js}}
+    {{flutter_build_config}}
+
+    var loading = document.querySelector('#loading');
+
+    _flutter.loader.load({
+      onEntrypointLoaded: async function (engineInitializer) {
         loading.classList.add('main_done');
-        return engineInitializer.initializeEngine();
-      }).then(function (appRunner) {
+        const appRunner = await engineInitializer.initializeEngine();
+
         loading.classList.add('init_done');
-        return appRunner.runApp();
-      }).then(function (app) {
+        await appRunner.runApp();
+
         // Wait a few milliseconds so users can see the "zoooom" animation
         // before getting rid of the "loading" div.
         window.setTimeout(function () {
           loading.remove();
         }, 200);
-      });
+      }
     });
   </script>
 </body>
