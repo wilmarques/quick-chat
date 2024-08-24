@@ -34,24 +34,20 @@ android {
     ndkVersion flutter.ndkVersion
 
     compileOptions {
-        sourceCompatibility JavaVersion.VERSION_1_8
-        targetCompatibility JavaVersion.VERSION_1_8
+        sourceCompatibility JavaVersion.VERSION_11
+        targetCompatibility JavaVersion.VERSION_11
     }
 
     kotlinOptions {
-        jvmTarget = '1.8'
-    }
-
-    sourceSets {
-        main.java.srcDirs += 'src/main/kotlin'
+        jvmTarget = JavaVersion.VERSION_11
     }
 
     defaultConfig {
-      applicationId "com.wilmarques.quick_chat"
-      minSdkVersion flutter.minSdkVersion
-      targetSdkVersion flutter.targetSdkVersion
-      versionCode flutterVersionCode.toInteger()
-      versionName flutterVersionName
+        applicationId "com.wilmarques.quick_chat"
+        minSdk = flutter.minSdkVersion
+        targetSdk = flutter.targetSdkVersion
+        versionCode = flutter.versionCode
+        versionName = flutter.versionName
     }
 
     signingConfigs {
@@ -62,10 +58,11 @@ android {
         storePassword keystoreProperties['storePassword']
       }
     }
+
     buildTypes {
       release {
-        signingConfig signingConfigs.release
-        // signingConfig = signingConfigs.debug
+          // signingConfig signingConfigs.release
+          signingConfig signingConfigs.debug
       }
     }
 }
