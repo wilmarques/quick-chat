@@ -16,7 +16,7 @@
         "--web-browser-flag",
         "--start-maximized",
         "--device-timeout",
-        "20"
+        "60"
       ]
     },
     {
