@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:phone_form_field/phone_form_field.dart';
@@ -19,6 +20,7 @@ class _HomePageState extends State<HomePage> {
   final _linkOpener = const LinkOpener();
   final _clipboardHandler = const ClipboardHandler();
   final _phoneUtils = const PhoneUtils();
+  final _phoneFieldFocusNode = FocusNode();
 
   late PhoneController _phoneNumberController;
 
@@ -52,11 +54,27 @@ class _HomePageState extends State<HomePage> {
   }
 
   @override
-  initState() {
+  void initState() {
     super.initState();
     var phoneNumber =
         PhoneNumber(isoCode: _phoneUtils.currentIsoCode(), nsn: '');
     _phoneNumberController = PhoneController(initialValue: phoneNumber);
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+
+    // Tap on the phone number field to show the keyboard, if not on web
+    // Because on web it doesn't work and produces bugs
+    if (!kIsWeb) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        // Not working
+        Future.delayed(const Duration(milliseconds: 500), () {
+          _phoneFieldFocusNode.requestFocus();
+        });
+      });
+    }
   }
 
   @override
@@ -72,7 +90,8 @@ class _HomePageState extends State<HomePage> {
             const SizedBox(height: 60.0),
             PhoneFormField(
               key: const Key('phone_number_field'),
-              autofocus: true,
+              autofocus: false,
+              focusNode: _phoneFieldFocusNode,
               controller: _phoneNumberController,
               decoration: const InputDecoration(
                 labelText: 'Enter Phone Numer',
