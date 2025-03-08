@@ -36,7 +36,7 @@ USER $USERNAME
 RUN mkdir -p $ANDROID_HOME/cmdline-tools/latest \
   && mv $ANDROID_HOME/cmdline-tools/bin $ANDROID_HOME/cmdline-tools/latest \
   && mv $ANDROID_HOME/cmdline-tools/lib $ANDROID_HOME/cmdline-tools/latest \
-  && yes | sdkmanager "platform-tools" "build-tools;34.0.0" "platforms;android-34"
+  && yes | sdkmanager "platform-tools" "build-tools;35.0.0" "platforms;android-35"
 
 ############################################################
 ############################ WEB ###########################

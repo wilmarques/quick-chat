@@ -1,0 +1,1 @@
+/workspaces/quick-chat/build/app/intermediates/cxx/RelWithDebInfo/591d5p6c/obj/x86_64

@@ -1,0 +1,2 @@
+/workspaces/quick-chat/android/app/.cxx/RelWithDebInfo/591d5p6c/armeabi-v7a/CMakeFiles/edit_cache.dir
+/workspaces/quick-chat/android/app/.cxx/RelWithDebInfo/591d5p6c/armeabi-v7a/CMakeFiles/rebuild_cache.dir
