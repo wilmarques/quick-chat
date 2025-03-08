@@ -65,22 +65,22 @@ RUN curl https://packages.microsoft.com/keys/microsoft.asc | gpg --dearmor > mic
 
 USER root
 
-ENV FLUTTER_HOME=$TOOLS_HOME/flutter
-ENV FLUTTER_VERSION=3.24.0
+ENV FLUTTER_ROOT=$TOOLS_HOME/flutter
+ENV FLUTTER_VERSION=3.29.1
 ENV FLUTTER_GIT_URL=https://github.com/flutter/flutter
 
-# Create FLUTTER_HOME dir
-RUN mkdir -p $FLUTTER_HOME
-# Give remote user ownership of FLUTTER_HOME
-RUN chown -R ${USERNAME} $FLUTTER_HOME
+# Create FLUTTER_ROOT dir
+RUN mkdir -p $FLUTTER_ROOT
+# Give remote user ownership of FLUTTER_ROOT
+RUN chown -R ${USERNAME} $FLUTTER_ROOT
 
 # Switch to remote user
 USER ${USERNAME}
-# Clone Flutter into FLUTTER_HOME
-RUN git clone ${FLUTTER_GIT_URL} -b $FLUTTER_VERSION $FLUTTER_HOME
+# Clone Flutter into FLUTTER_ROOT
+RUN git clone ${FLUTTER_GIT_URL} -b $FLUTTER_VERSION $FLUTTER_ROOT
 
-ENV PATH="$FLUTTER_HOME/bin:$PATH"
-ENV PUB_CACHE=$FLUTTER_HOME/.pub_cache
+ENV PATH="$FLUTTER_ROOT/bin:$PATH"
+ENV PUB_CACHE=$FLUTTER_ROOT/.pub_cache
 
 # Enable Flutter Web, Android and Linux Desktop
 # Also doing precache, to increase workspace init

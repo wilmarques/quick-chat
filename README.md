@@ -9,5 +9,5 @@ Quick Chat is here for the rescue!
 
 Just type (or paste) the number you to chat with and let the magic happens 🙂
 
-- Android: https://play.google.com/store/apps/details?id=com.wilmarques.quick_chat
-- PWA: https://wil.marques.dev/quick-chat/
+- Android: <https://play.google.com/store/apps/details?id=com.wilmarques.quick_chat>
+- PWA: <https://wil.marques.dev/quick-chat/>
