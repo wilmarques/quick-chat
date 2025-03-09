@@ -14,11 +14,18 @@
   "prefer_related_applications": false,
   "screenshots": [
     {
-      "src": "screenshots/home.png",
+      "src": "screenshots/quick-chat-screenshot-1.png",
       "sizes": "1280x720",
       "type": "image/png",
       "platform": "narrow",
-      "label": "Home screen"
+      "label": "Effortless Chatting Anytime"
+    },
+    {
+      "src": "screenshots/quick-chat-screenshot-2.png",
+      "sizes": "1280x720",
+      "type": "image/png",
+      "platform": "wide",
+      "label": "Quickly Message Anyone"
     }
   ],
   "icons": [
