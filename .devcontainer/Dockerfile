@@ -66,7 +66,7 @@ RUN curl https://packages.microsoft.com/keys/microsoft.asc | gpg --dearmor > mic
 USER root
 
 ENV FLUTTER_ROOT=$TOOLS_HOME/flutter
-ENV FLUTTER_VERSION=3.29.1
+ENV FLUTTER_VERSION=3.47.9
 ENV FLUTTER_GIT_URL=https://github.com/flutter/flutter
 
 # Create FLUTTER_ROOT dir

@@ -1,6 +1,9 @@
+import 'dart:async';
+
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:material_ui/material_ui.dart' as mui;
 import 'package:phone_form_field/phone_form_field.dart';
 
 import '../utils/clipboard_handler.dart';
@@ -23,13 +26,16 @@ class _HomePageState extends State<HomePage> {
   final _phoneFieldFocusNode = FocusNode();
 
   late PhoneController _phoneNumberController;
+  Timer? _requestFocusTimer;
 
   void _pasteFromClipboard() async {
     try {
       final clipboardValue = await _clipboardHandler.paste();
       setState(() {
-        _phoneNumberController.value = PhoneNumber.parse(clipboardValue,
-            callerCountry: _phoneUtils.currentIsoCode());
+        _phoneNumberController.value = PhoneNumber.parse(
+          clipboardValue,
+          callerCountry: _phoneUtils.currentIsoCode(),
+        );
       });
     } catch (exception) {
       throw 'Could not read from clipboard';
@@ -43,10 +49,7 @@ class _HomePageState extends State<HomePage> {
 
   void _openPhoneOnTarget(String? phone, LinkOpenerTarget target) async {
     try {
-      await _linkOpener.openLink(
-        link: phone,
-        target: target,
-      );
+      await _linkOpener.openLink(link: phone, target: target);
     } catch (exception) {
       // TODO: Handle exception and give visual feedback to users
       throw 'Could not launch $phone';
@@ -56,8 +59,10 @@ class _HomePageState extends State<HomePage> {
   @override
   void initState() {
     super.initState();
-    var phoneNumber =
-        PhoneNumber(isoCode: _phoneUtils.currentIsoCode(), nsn: '');
+    var phoneNumber = PhoneNumber(
+      isoCode: _phoneUtils.currentIsoCode(),
+      nsn: '',
+    );
     _phoneNumberController = PhoneController(initialValue: phoneNumber);
   }
 
@@ -70,7 +75,7 @@ class _HomePageState extends State<HomePage> {
     if (!kIsWeb) {
       WidgetsBinding.instance.addPostFrameCallback((_) {
         // Not working
-        Future.delayed(const Duration(milliseconds: 500), () {
+        _requestFocusTimer = Timer(const Duration(milliseconds: 500), () {
           _phoneFieldFocusNode.requestFocus();
         });
       });
@@ -78,23 +83,31 @@ class _HomePageState extends State<HomePage> {
   }
 
   @override
+  void dispose() {
+    _requestFocusTimer?.cancel();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Quick Chat'),
-      ),
+      appBar: AppBar(title: const Text('Quick Chat')),
       body: SafeArea(
         child: ListView(
           padding: const EdgeInsets.symmetric(horizontal: 24.0),
           children: <Widget>[
             const SizedBox(height: 60.0),
-            PhoneFormField(
-              key: const Key('phone_number_field'),
-              autofocus: false,
-              focusNode: _phoneFieldFocusNode,
-              controller: _phoneNumberController,
-              decoration: const InputDecoration(
-                labelText: 'Enter Phone Numer',
+            mui.Material(
+              type: mui.MaterialType.transparency,
+              child: PhoneFormField(
+                key: const Key('phone_number_field'),
+                autofocus: false,
+                focusNode: _phoneFieldFocusNode,
+                controller: _phoneNumberController,
+                decoration: const mui.InputDecoration(
+                  labelText: 'Enter Phone Numer',
+                  border: mui.OutlineInputBorder(),
+                ),
               ),
             ),
             const SizedBox(height: 40.0),
@@ -103,11 +116,9 @@ class _HomePageState extends State<HomePage> {
                 ElevatedButton.icon(
                   key: const Key('open_in_whatsapp_button'),
                   onPressed: _openInWhatsapp,
-                  icon: const Icon(FontAwesomeIcons.whatsapp, size: 18),
+                  icon: const FaIcon(FontAwesomeIcons.whatsapp, size: 18),
                   label: const Text('Open in WhatsApp'),
-                  style: ElevatedButton.styleFrom(
-                    elevation: 8.0,
-                  ),
+                  style: ElevatedButton.styleFrom(elevation: 8.0),
                 ),
                 TextButton(
                   onPressed: _pasteFromClipboard,

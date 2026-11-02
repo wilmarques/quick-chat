@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:phone_form_field/phone_form_field.dart';
 
 import 'theme.dart';
 
@@ -12,6 +13,7 @@ class QuickChatApp extends StatelessWidget {
     return MaterialApp(
       title: 'Quick Chat',
       theme: quickChatLightTheme,
+      localizationsDelegates: PhoneFieldLocalization.delegates,
       home: const HomePage(),
     );
   }
