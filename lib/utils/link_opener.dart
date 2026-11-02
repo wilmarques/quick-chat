@@ -8,7 +8,7 @@ enum LinkOpenerTarget {
 class LinkOpener {
   const LinkOpener();
 
-  openLink({String? link, required LinkOpenerTarget target}) async {
+  Future<void> openLink({String? link, required LinkOpenerTarget target}) async {
     if (link == null || link == '') {
       throw 'No valid number provided';
     }
@@ -20,7 +20,7 @@ class LinkOpener {
     }
   }
 
-  _openLinkInWhatsApp(String link) async {
+  Future<void> _openLinkInWhatsApp(String link) async {
     final whatsAppUri = Uri(scheme: 'whatsapp', host: 'send', queryParameters: {
       'phone': link,
     });
