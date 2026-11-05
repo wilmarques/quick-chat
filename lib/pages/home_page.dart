@@ -10,6 +10,8 @@ import '../utils/clipboard_handler.dart';
 import '../utils/link_opener.dart';
 import '../utils/phone_utils.dart';
 import '../utils/recent_numbers_store.dart';
+import '../widgets/clear_history_dialog.dart';
+import '../widgets/recent_numbers_section.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({
@@ -109,26 +111,8 @@ class _HomePageState extends State<HomePage> {
   }
 
   Future<void> _clearHistory() async {
-    final confirmed = await showDialog<bool>(
-      context: context,
-      builder: (context) => AlertDialog(
-        title: const Text('Clear recent numbers?'),
-        content: const Text(
-          'This removes the history saved on this device. Your WhatsApp chats are not affected.',
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(context, false),
-            child: const Text('Cancel'),
-          ),
-          TextButton(
-            onPressed: () => Navigator.pop(context, true),
-            child: const Text('Clear history'),
-          ),
-        ],
-      ),
-    );
-    if (confirmed != true || !mounted) return;
+    final confirmed = await confirmClearHistory(context);
+    if (!confirmed || !mounted) return;
     setState(() => _busy = true);
     try {
       await widget.recentNumbersStore.save([]);
@@ -140,91 +124,6 @@ class _HomePageState extends State<HomePage> {
     } finally {
       if (mounted) setState(() => _busy = false);
     }
-  }
-
-  String _openedAtLabel(DateTime openedAt) {
-    final now = DateTime.now();
-    final today = DateTime(now.year, now.month, now.day);
-    final date = DateTime(openedAt.year, openedAt.month, openedAt.day);
-    final yesterday = DateTime(now.year, now.month, now.day - 1);
-    final localizations = MaterialLocalizations.of(context);
-    final day = date == today
-        ? 'Today'
-        : date == yesterday
-        ? 'Yesterday'
-        : localizations.formatShortDate(openedAt);
-    final time = localizations.formatTimeOfDay(
-      TimeOfDay.fromDateTime(openedAt),
-      alwaysUse24HourFormat: MediaQuery.alwaysUse24HourFormatOf(context),
-    );
-    return '$day, $time';
-  }
-
-  Widget _buildRecentNumbers() {
-    final colors = Theme.of(context).colorScheme;
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        const SizedBox(height: 24),
-        Row(
-          children: [
-            Expanded(
-              child: Text(
-                'Recent numbers',
-                style: Theme.of(context).textTheme.titleMedium,
-              ),
-            ),
-            TextButton(
-              onPressed: _busy ? null : _clearHistory,
-              child: const Text('Clear all'),
-            ),
-          ],
-        ),
-        Card(
-          margin: EdgeInsets.zero,
-          elevation: 0,
-          color: colors.surface,
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(12),
-            side: BorderSide(color: colors.outlineVariant),
-          ),
-          clipBehavior: Clip.antiAlias,
-          child: Column(
-            children: [
-              for (var index = 0; index < _recentNumbers.length; index++) ...[
-                if (index > 0)
-                  const Divider(height: 1, indent: 16, endIndent: 16),
-                ListTile(
-                  key: ValueKey('recent_${_recentNumbers[index].phone}'),
-                  leading: FaIcon(
-                    FontAwesomeIcons.whatsapp,
-                    color: colors.primary,
-                    size: 22,
-                  ),
-                  title: Text(
-                    PhoneNumber.parse(_recentNumbers[index].phone)
-                        .international,
-                  ),
-                  subtitle: Text(
-                    _openedAtLabel(_recentNumbers[index].openedAt),
-                  ),
-                  trailing: Icon(Icons.chevron_right, color: colors.primary),
-                  onTap: _busy
-                      ? null
-                      : () => _openPhoneOnTarget(_recentNumbers[index].phone),
-                ),
-              ],
-            ],
-          ),
-        ),
-        const SizedBox(height: 12),
-        Text(
-          'Tap a number to reopen in WhatsApp.\nHistory stays on this device.',
-          style: Theme.of(context).textTheme.bodySmall,
-        ),
-        const SizedBox(height: 24),
-      ],
-    );
   }
 
   @override
@@ -302,7 +201,13 @@ class _HomePageState extends State<HomePage> {
                 ),
               ],
             ),
-            if (_recentNumbers.isNotEmpty) _buildRecentNumbers(),
+            if (_recentNumbers.isNotEmpty)
+              RecentNumbersSection(
+                entries: _recentNumbers,
+                enabled: !_busy,
+                onOpen: _openPhoneOnTarget,
+                onClearAll: _clearHistory,
+              ),
           ],
         ),
       ),
