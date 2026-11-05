@@ -34,7 +34,7 @@ Rules from the user:
 
 The VM is Ubuntu 22.04 with git and python3. `~/repos` holds other projects and `quick-chat` is not cloned. `flutter` is not on PATH by default, and an older Flutter (it was 3.47.6) may sit in `~/flutter`.
 
-Use the Flutter version pinned in `.devcontainer/Dockerfile` (`FLUTTER_VERSION`). Install it next to the existing one instead of modifying `~/flutter`:
+Use the Flutter version pinned in `.github/workflows/deploy-web.yml` (`env.FLUTTER_VERSION`). Install it next to the existing one instead of modifying `~/flutter`:
 
 ```bash
 git clone -b <branch> https://github.com/wilmarques/quick-chat.git ~/repos/quick-chat   # if it exists already: cd ~/repos/quick-chat && git fetch && git checkout <branch> && git pull
@@ -44,7 +44,7 @@ cd ~/repos/quick-chat
 nohup sh -c 'flutter config --enable-web --no-analytics && flutter pub get && flutter build web --release --base-href / && echo BUILD_OK' > /tmp/qc-build.log 2>&1 &
 ```
 
-- Use `--base-href /` so the app loads at the root of `localhost:8080`. (`deploy-to-ghpages.sh` uses `/quick-chat/` for GitHub Pages, which would not work at the root.)
+- Use `--base-href /` so the app loads at the root of `localhost:8080`. (The `deploy-web.yml` workflow uses `/quick-chat/` for GitHub Pages, which would not work at the root.)
 - The build takes about 1.5 minutes (including the first `flutter pub get` and engine download). Wait for `BUILD_OK` in `/tmp/qc-build.log` with `tail`. Don't poll in a tight loop. Use `sleep 60; tail -3 /tmp/qc-build.log`.
 
 ## 5. Serve on the VM
