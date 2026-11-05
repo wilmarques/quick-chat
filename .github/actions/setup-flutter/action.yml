@@ -1,0 +1,59 @@
+name: Set up Flutter
+description: Install the pinned stable Flutter SDK from the official release archive, with SDK and pub caching.
+
+inputs:
+  flutter-version:
+    description: Stable Flutter version to install.
+    required: true
+
+runs:
+  using: composite
+  steps:
+    - name: Resolve Flutter paths
+      shell: bash
+      env:
+        FLUTTER_VERSION: ${{ inputs.flutter-version }}
+      run: |
+        echo "FLUTTER_ROOT=$RUNNER_TOOL_CACHE/flutter-$FLUTTER_VERSION" >> "$GITHUB_ENV"
+        echo "PUB_CACHE=$HOME/.pub-cache" >> "$GITHUB_ENV"
+
+    - name: Cache Flutter SDK (actions/cache v6.1.0)
+      id: sdk-cache
+      uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9
+      with:
+        path: ${{ env.FLUTTER_ROOT }}
+        key: flutter-sdk-${{ runner.os }}-${{ runner.arch }}-${{ inputs.flutter-version }}-${{ github.job }}
+
+    - name: Download Flutter SDK
+      if: steps.sdk-cache.outputs.cache-hit != 'true'
+      shell: bash
+      env:
+        FLUTTER_VERSION: ${{ inputs.flutter-version }}
+      run: |
+        set -euo pipefail
+        base=https://storage.googleapis.com/flutter_infra_release/releases
+        archive="stable/linux/flutter_linux_${FLUTTER_VERSION}-stable.tar.xz"
+        sha256=$(curl -fsSL "$base/releases_linux.json" | jq -r --arg archive "$archive" '.releases[] | select(.archive == $archive) | .sha256')
+        if [ -z "$sha256" ]; then
+          echo "::error::Flutter $FLUTTER_VERSION is not a stable Linux release."
+          exit 1
+        fi
+        curl -fsSLo "$RUNNER_TEMP/flutter.tar.xz" "$base/$archive"
+        echo "$sha256  $RUNNER_TEMP/flutter.tar.xz" | sha256sum --check -
+        mkdir -p "$FLUTTER_ROOT"
+        tar -xJf "$RUNNER_TEMP/flutter.tar.xz" -C "$FLUTTER_ROOT" --strip-components=1
+        rm "$RUNNER_TEMP/flutter.tar.xz"
+
+    - name: Cache pub packages (actions/cache v6.1.0)
+      uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9
+      with:
+        path: ${{ env.PUB_CACHE }}
+        key: pub-${{ runner.os }}-${{ hashFiles('pubspec.lock') }}
+        restore-keys: pub-${{ runner.os }}-
+
+    - name: Add Flutter to PATH
+      shell: bash
+      run: |
+        echo "$FLUTTER_ROOT/bin" >> "$GITHUB_PATH"
+        "$FLUTTER_ROOT/bin/flutter" config --no-analytics
+        "$FLUTTER_ROOT/bin/flutter" --version

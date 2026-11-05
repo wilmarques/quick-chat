@@ -3,6 +3,7 @@
 ## Verification
 
 - The Flutter SDK version is pinned by `env.FLUTTER_VERSION` in `.github/workflows/deploy.yml`; keep it accurate.
+- CI installs Flutter with the local composite action `.github/actions/setup-flutter` (official stable archive, SHA-256 checked against `releases_linux.json`, SDK and pub cache via `actions/cache`); no third-party Flutter setup action.
 - `.github/workflows/deploy.yml` runs `flutter pub get --enforce-lockfile`, `flutter analyze --no-pub`, `flutter test --no-pub`, and `flutter build web --release --no-pub --base-href /quick-chat/` on every push/PR to `main`. Let CI run these checks; do not compile the web app locally.
 - Versioning follows SemVer via Release Please and Conventional Commits: `feat` bumps minor, `fix` bumps patch, `feat!`/`BREAKING CHANGE` bumps major; `chore`, `ci`, `docs`, etc. never release. Release Please keeps a release PR open that bumps `version` in `pubspec.yaml` (incrementing the `+build` number), `CHANGELOG.md` and `.release-please-manifest.json`. Never bump the version by hand.
 - Deployment to GitHub Pages goes through GitHub Actions only, and only when a release is created (the release PR is merged). Ordinary pushes to `main` never deploy.
