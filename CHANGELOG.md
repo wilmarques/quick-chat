@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.5.0](https://github.com/wilmarques/quick-chat/compare/v1.4.0...v1.5.0) (2026-11-05)
+
+
+### Features
+
+* remember recent WhatsApp numbers ([#12](https://github.com/wilmarques/quick-chat/issues/12)) ([ae4815f](https://github.com/wilmarques/quick-chat/commit/ae4815f497b5574e5c7dc3817b1db779173b2b2a))
+
 ## [1.4.0](https://github.com/wilmarques/quick-chat/compare/v1.3.0...v1.4.0) (2026-11-05)
 
 
