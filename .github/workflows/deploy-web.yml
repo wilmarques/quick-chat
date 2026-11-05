@@ -10,6 +10,9 @@ on:
 permissions:
   contents: read
 
+env:
+  FLUTTER_VERSION: 3.47.9
+
 concurrency:
   group: pages-${{ github.ref }}
   cancel-in-progress: false
@@ -24,17 +27,10 @@ jobs:
         with:
           persist-credentials: false
 
-      - name: Extract Flutter version
-        id: flutter-version
-        run: |
-          version=$(sed -n 's/^ENV FLUTTER_VERSION=//p' .devcontainer/Dockerfile)
-          test -n "$version"
-          echo "version=$version" >> "$GITHUB_OUTPUT"
-
       - name: Set up Flutter (subosito/flutter-action v2.23.0)
         uses: subosito/flutter-action@1a449444c387b1966244ae4d4f8c696479add0b2
         with:
-          flutter-version: ${{ steps.flutter-version.outputs.version }}
+          flutter-version: ${{ env.FLUTTER_VERSION }}
           channel: stable
           cache: true
 

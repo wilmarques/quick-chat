@@ -2,7 +2,6 @@
   "recommendations": [
     "dart-code.flutter",
     "dart-code.dart-code",
-    "ms-azuretools.vscode-docker",
     "redhat.java",
     "vscjava.vscode-java-debug",
     "editorconfig.editorconfig",

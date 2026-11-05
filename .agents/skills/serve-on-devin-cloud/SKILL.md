@@ -34,7 +34,7 @@ Rules from the user:
 
 The VM is Ubuntu 22.04 with git and python3. `~/repos` holds other projects and `quick-chat` is not cloned. `flutter` is not on PATH by default, and an older Flutter (it was 3.47.6) may sit in `~/flutter`.
 
-Use the Flutter version pinned in `.devcontainer/Dockerfile` (`FLUTTER_VERSION`). Install it next to the existing one instead of modifying `~/flutter`:
+Use the Flutter version pinned in `.github/workflows/deploy-web.yml` (`env.FLUTTER_VERSION`). Install it next to the existing one instead of modifying `~/flutter`:
 
 ```bash
 git clone -b <branch> https://github.com/wilmarques/quick-chat.git ~/repos/quick-chat   # if it exists already: cd ~/repos/quick-chat && git fetch && git checkout <branch> && git pull
