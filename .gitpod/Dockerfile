@@ -25,7 +25,7 @@ RUN _file_name="commandlinetools-linux-11076708_latest.zip" \
   && rm -f "$_file_name" \
   && mkdir -p $ANDROID_HOME/cmdline-tools/latest \
   && mv $ANDROID_HOME/cmdline-tools/{bin,lib} $ANDROID_HOME/cmdline-tools/latest \
-  && yes | sdkmanager "platform-tools" "build-tools;36.0.0" "platforms;android-36"
+  && yes | sdkmanager "platform-tools" "build-tools;34.0.0" "platforms;android-34"
 
 ############################################################
 ############################ WEB ###########################

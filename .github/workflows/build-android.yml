@@ -27,7 +27,10 @@ jobs:
       - name: Extract Flutter version
         id: flutter-version
         run: |
-          version=$(sed -n 's/^ENV FLUTTER_VERSION=//p' .devcontainer/Dockerfile)
+          version=$(sed -n 's/^  FLUTTER_VERSION: //p' .github/workflows/deploy-web.yml)
+          if [ -z "$version" ] && [ -f .devcontainer/Dockerfile ]; then
+            version=$(sed -n 's/^ENV FLUTTER_VERSION=//p' .devcontainer/Dockerfile)
+          fi
           test -n "$version"
           echo "version=$version" >> "$GITHUB_OUTPUT"
 
