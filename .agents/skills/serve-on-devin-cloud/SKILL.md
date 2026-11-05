@@ -44,7 +44,7 @@ cd ~/repos/quick-chat
 nohup sh -c 'flutter config --enable-web --no-analytics && flutter pub get && flutter build web --release --base-href / && echo BUILD_OK' > /tmp/qc-build.log 2>&1 &
 ```
 
-- Use `--base-href /` so the app loads at the root of `localhost:8080`. (`deploy-to-ghpages.sh` uses `/quick-chat/` for GitHub Pages, which would not work at the root.)
+- Use `--base-href /` so the app loads at the root of `localhost:8080`. (The `deploy-web.yml` workflow uses `/quick-chat/` for GitHub Pages, which would not work at the root.)
 - The build takes about 1.5 minutes (including the first `flutter pub get` and engine download). Wait for `BUILD_OK` in `/tmp/qc-build.log` with `tail`. Don't poll in a tight loop. Use `sleep 60; tail -3 /tmp/qc-build.log`.
 
 ## 5. Serve on the VM
