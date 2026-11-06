@@ -29,7 +29,6 @@ dependencies:
     sdk: flutter
 
   url_launcher: ^6.1.0
-  clipboard: ^3.0.14
   material_ui: ^1.9.0
   phone_form_field: ^12.0.1
   font_awesome_flutter: ^11.0.0
@@ -58,7 +57,7 @@ flutter_icons:
   image_path: "assets/icons/icon-512.png"
   adaptive_icon_background: "#25d366"
   adaptive_icon_foreground: "assets/icons/icon-512.png"
-  min_sdk_android: 21
+  min_sdk_android: 24
   web:
     generate: true
     image_path: "assets/icons/icon-512.png"
