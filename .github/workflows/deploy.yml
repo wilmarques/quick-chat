@@ -113,10 +113,13 @@ jobs:
           ANDROID_KEY_ALIAS: ${{ secrets.ANDROID_KEY_ALIAS }}
           ANDROID_KEY_PASSWORD: ${{ secrets.ANDROID_KEY_PASSWORD }}
         run: |
-          if [ -z "$ANDROID_KEYSTORE_BASE64" ]; then
-            echo "::warning::ANDROID_KEYSTORE_BASE64 is not set; the release build is signed with the debug key."
-            exit 0
-          fi
+          for secret in ANDROID_KEYSTORE_BASE64 ANDROID_KEYSTORE_PASSWORD ANDROID_KEY_ALIAS ANDROID_KEY_PASSWORD; do
+            if [ -z "${!secret}" ]; then
+              echo "::error::$secret is required to sign Google Play releases."
+              exit 1
+            fi
+          done
+          umask 077
           keystore="$RUNNER_TEMP/upload-keystore.jks"
           printf '%s' "$ANDROID_KEYSTORE_BASE64" | base64 --decode > "$keystore"
           {
@@ -142,6 +145,67 @@ jobs:
             build/app/outputs/flutter-apk/app-release.apk
           if-no-files-found: error
           retention-days: 14
+
+      - name: Remove signing credentials
+        if: always()
+        run: rm -f android/key.properties "$RUNNER_TEMP/upload-keystore.jks"
+
+  deploy-android:
+    name: Deploy Android to Google Play (internal)
+    needs: [release, build-android]
+    if: needs.release.outputs.release_created == 'true'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    environment: google-play
+    steps:
+      - name: Download Android release (actions/download-artifact v8)
+        uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333
+        with:
+          name: android-release
+          path: android-release
+
+      - name: Authenticate to Google Play (google-github-actions/auth v3)
+        id: auth
+        uses: google-github-actions/auth@7c6bc770dae815cd3e89ee6cdf493a5fab2cc093
+        with:
+          credentials_json: ${{ secrets.GOOGLE_PLAY_SERVICE_ACCOUNT_JSON }}
+          token_format: access_token
+          access_token_scopes: https://www.googleapis.com/auth/androidpublisher
+          create_credentials_file: false
+          export_environment_variables: false
+
+      - name: Publish to internal testing
+        env:
+          GOOGLE_PLAY_ACCESS_TOKEN: ${{ steps.auth.outputs.access_token }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          : "${GOOGLE_PLAY_ACCESS_TOKEN:?Google Play access token is required}"
+          bundle="android-release/bundle/release/app-release.aab"
+          test -s "$bundle"
+          api="https://androidpublisher.googleapis.com/androidpublisher/v3/applications/com.wilmarques.quick_chat"
+          upload_api="https://androidpublisher.googleapis.com/upload/androidpublisher/v3/applications/com.wilmarques.quick_chat"
+          auth_header="Authorization: Bearer $GOOGLE_PLAY_ACCESS_TOKEN"
+
+          edit_id=$(curl --fail-with-body --silent --show-error --max-time 120 \
+            -X POST -H "$auth_header" -H 'Content-Type: application/json' \
+            --data '{}' "$api/edits" | jq -er '.id | select(type == "string" and length > 0)')
+
+          version_code=$(curl --fail-with-body --silent --show-error --max-time 600 \
+            -X POST -H "$auth_header" -H 'Content-Type: application/octet-stream' \
+            --data-binary "@$bundle" "$upload_api/edits/$edit_id/bundles?uploadType=media" \
+            | jq -er '.versionCode | select(type == "number" and . > 0 and . == floor) | tostring')
+
+          release=$(jq -n --arg version "$version_code" \
+            '{track: "internal", releases: [{status: "completed", versionCodes: [$version]}]}')
+          curl --fail-with-body --silent --show-error --max-time 120 \
+            -X PUT -H "$auth_header" -H 'Content-Type: application/json' \
+            --data "$release" "$api/edits/$edit_id/tracks/internal"
+
+          curl --fail-with-body --silent --show-error --max-time 120 \
+            -X POST -H "$auth_header" \
+            "$api/edits/$edit_id:commit?changesInReviewBehavior=ERROR_IF_IN_REVIEW"
+          echo "Published version code $version_code to Google Play internal testing."
 
   deploy:
     needs: [release, build]
