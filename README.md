@@ -26,6 +26,10 @@ The Build and Release workflow publishes the signed Android App Bundle directly
 to Google Play **Internal testing** when a Release Please release is created.
 Pull requests and ordinary pushes only build and test; they never publish.
 The APK and AAB remain available as the `android-release` workflow artifact.
+For release builds, Android checks out the source SHA reported by Release Please,
+so the uploaded bundle is built from the release tag's exact commit. If Release
+Please omits that SHA, the release build fails instead of using the triggering
+commit. Pull requests and non-release pushes keep the default event checkout.
 
 ### One-time setup
 
@@ -63,10 +67,15 @@ The APK and AAB remain available as the `android-release` workflow artifact.
    versions in this workflow; reconcile any existing Play version history before
    the first automated release.
 
-Publishing uploads the AAB, assigns its returned version code to the `internal`
-track with status `completed`, and commits the edit. It does not promote to
-production. Missing credentials or Play API errors fail the workflow rather
-than silently skipping deployment. If Play reports changes already in review,
-wait for or resolve that review before retrying; the workflow does not cancel
-reviews or fall back to an unpublished draft. Google Play review and processing
-may still delay availability to testers.
+Before uploading, publishing compares the local AAB SHA-256 with bundles already
+in the new Play edit. If the same bundle is already completed on the `internal`
+track, the workflow reports it as deployed and skips upload, track update, and
+commit. If its bundle exists but is not completed on that track, the workflow
+reuses its version code to update and commit the internal release without
+reuploading. It uploads only when no matching bundle exists. This makes a rerun
+safe if a prior commit succeeded but its response was lost; API mutations are
+not automatically retried. The workflow does not promote to production. Missing
+credentials or Play API errors fail the workflow with the API response body where available. If
+Play reports changes already in review, wait for or resolve that review before
+retrying; the workflow does not cancel reviews or fall back to an unpublished
+draft. Google Play review and processing may still delay availability to testers.

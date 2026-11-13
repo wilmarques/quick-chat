@@ -26,6 +26,7 @@ jobs:
       pull-requests: write
     outputs:
       release_created: ${{ steps.release.outputs.release_created }}
+      sha: ${{ steps.release.outputs.sha }}
     steps:
       - name: Create GitHub App token (actions/create-github-app-token v3.2.0)
         id: app-token
@@ -86,7 +87,25 @@ jobs:
     runs-on: ubuntu-24.04
     timeout-minutes: 30
     steps:
+      - name: Verify Release Please SHA
+        if: needs.release.outputs.release_created == 'true'
+        env:
+          RELEASE_SHA: ${{ needs.release.outputs.sha }}
+        run: |
+          if [ -z "$RELEASE_SHA" ]; then
+            echo "::error::Release Please did not provide a source SHA."
+            exit 1
+          fi
+
+      - name: Checkout release source (actions/checkout v7.0.1)
+        if: needs.release.outputs.release_created == 'true'
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+        with:
+          ref: ${{ needs.release.outputs.sha }}
+          persist-credentials: false
+
       - name: Checkout (actions/checkout v7.0.1)
+        if: needs.release.outputs.release_created != 'true'
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
         with:
           persist-credentials: false
@@ -187,24 +206,114 @@ jobs:
           upload_api="https://androidpublisher.googleapis.com/upload/androidpublisher/v3/applications/com.wilmarques.quick_chat"
           auth_header="Authorization: Bearer $GOOGLE_PLAY_ACCESS_TOKEN"
 
-          edit_id=$(curl --fail-with-body --silent --show-error --max-time 120 \
-            -X POST -H "$auth_header" -H 'Content-Type: application/json' \
-            --data '{}' "$api/edits" | jq -er '.id | select(type == "string" and length > 0)')
+          play_api_request() {
+            local timeout response status
+            timeout=$1
+            shift
+            if response=$(curl --fail-with-body --silent --show-error --max-time "$timeout" "$@"); then
+              printf '%s' "$response"
+            else
+              status=$?
+              printf 'Google Play API request failed; response body follows:\n%s\n' "$response" >&2
+              return "$status"
+            fi
+          }
 
-          version_code=$(curl --fail-with-body --silent --show-error --max-time 600 \
-            -X POST -H "$auth_header" -H 'Content-Type: application/octet-stream' \
-            --data-binary "@$bundle" "$upload_api/edits/$edit_id/bundles?uploadType=media" \
-            | jq -er '.versionCode | select(type == "number" and . > 0 and . == floor) | tostring')
+          if edit_response=$(play_api_request 120 \
+            -X POST -H "$auth_header" -H 'Content-Type: application/json' \
+            --data '{}' "$api/edits"); then
+            :
+          else
+            exit $?
+          fi
+          edit_id=$(jq -er '.id | select(type == "string" and length > 0)' <<< "$edit_response")
+
+          if bundles_response=$(play_api_request 120 \
+            -X GET -H "$auth_header" "$api/edits/$edit_id/bundles"); then
+            :
+          else
+            exit $?
+          fi
+          if [ -z "${bundles_response//[[:space:]]/}" ]; then
+            echo "::error::Google Play bundle list response was empty."
+            exit 1
+          fi
+
+          bundle_sha256=$(sha256sum "$bundle" | cut -d ' ' -f 1)
+          existing_version_code=$(jq -r --arg sha256 "$bundle_sha256" '
+            if type != "object" then error("expected a bundle list object")
+            else
+              (.bundles // []) as $bundles
+              | if ($bundles | type) != "array" then error("bundles must be an array")
+                else
+                  [$bundles[]
+                    | if type != "object" then error("bundle entry must be an object")
+                      elif (.sha256 | type) != "string" or ((.sha256 | test("^[0-9a-f]{64}$")) | not) then error("bundle sha256 must be lowercase hexadecimal")
+                      elif (.versionCode | type) != "number" or .versionCode <= 0 or .versionCode != (.versionCode | floor) then error("bundle versionCode must be a positive integer")
+                      else . end
+                    | select(.sha256 == $sha256)] as $matches
+                  | if ($matches | length) > 1 then error("multiple bundles match the uploaded AAB")
+                    elif ($matches | length) == 0 then ""
+                    else ($matches[0].versionCode | tostring)
+                    end
+                end
+            end
+          ' <<< "$bundles_response")
+
+          if [ -n "$existing_version_code" ]; then
+            if track_response=$(play_api_request 120 \
+              -X GET -H "$auth_header" "$api/edits/$edit_id/tracks/internal"); then
+              :
+            else
+              exit $?
+            fi
+            if [ -z "${track_response//[[:space:]]/}" ]; then
+              echo "::error::Google Play internal track response was empty."
+              exit 1
+            fi
+            track_completed=$(jq -r --arg version "$existing_version_code" '
+              if type != "object" then error("expected a track object")
+              else
+                (.releases // []) as $releases
+                | if ($releases | type) != "array" then error("track releases must be an array")
+                  else
+                    any($releases[];
+                      if type != "object" then error("track release must be an object")
+                      else
+                        (.versionCodes // []) as $versions
+                        | if ($versions | type) != "array" then error("release versionCodes must be an array")
+                          elif any($versions[]; if type == "number" then . <= 0 or . != floor elif type == "string" then (test("^[1-9][0-9]*$") | not) else true end) then error("release versionCode must be a positive integer")
+                          else .status == "completed" and any($versions[]; tostring == $version)
+                          end
+                      end)
+                  end
+              end
+            ' <<< "$track_response")
+            if [ "$track_completed" = "true" ]; then
+              echo "Version code $existing_version_code is already completed on Google Play internal testing."
+              exit 0
+            fi
+            version_code=$existing_version_code
+          else
+            if upload_response=$(play_api_request 600 \
+              -X POST -H "$auth_header" -H 'Content-Type: application/octet-stream' \
+              --data-binary "@$bundle" "$upload_api/edits/$edit_id/bundles?uploadType=media"); then
+              :
+            else
+              exit $?
+            fi
+            version_code=$(jq -er '.versionCode | select(type == "number" and . > 0 and . == floor) | tostring' <<< "$upload_response")
+          fi
 
           release=$(jq -n --arg version "$version_code" \
             '{track: "internal", releases: [{status: "completed", versionCodes: [$version]}]}')
-          curl --fail-with-body --silent --show-error --max-time 120 \
+          play_api_request 120 \
             -X PUT -H "$auth_header" -H 'Content-Type: application/json' \
-            --data "$release" "$api/edits/$edit_id/tracks/internal"
+            --data "$release" "$api/edits/$edit_id/tracks/internal" >/dev/null
 
-          curl --fail-with-body --silent --show-error --max-time 120 \
+          play_api_request 120 \
             -X POST -H "$auth_header" \
-            "$api/edits/$edit_id:commit?changesInReviewBehavior=ERROR_IF_IN_REVIEW"
+            "$api/edits/$edit_id:commit?changesInReviewBehavior=ERROR_IF_IN_REVIEW" >/dev/null
           echo "Published version code $version_code to Google Play internal testing."
 
   deploy:
