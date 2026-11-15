@@ -6,7 +6,7 @@ Future<bool> confirmClearHistory(BuildContext context) async {
     builder: (context) => AlertDialog(
       title: const Text('Clear recent numbers?'),
       content: const Text(
-        'This removes the history saved on this device. Your WhatsApp chats are not affected.',
+        'This removes the history saved on this device. Your chats are not affected.',
       ),
       actions: [
         TextButton(

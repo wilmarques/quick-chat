@@ -172,6 +172,12 @@ void main() {
     await showHome(tester, FakeLinkOpener());
     await tester.tap(find.text('Clear all'));
     await tester.pumpAndSettle();
+    expect(
+      find.text(
+        'This removes the history saved on this device. Your chats are not affected.',
+      ),
+      findsOneWidget,
+    );
     await tester.tap(find.text('Cancel'));
     await tester.pumpAndSettle();
     expect(find.text('Recent numbers'), findsOneWidget);
