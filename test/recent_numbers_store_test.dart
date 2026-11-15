@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:flutter_test/flutter_test.dart';
+import 'package:quick_chat/utils/link_opener.dart';
 import 'package:quick_chat/utils/recent_numbers_store.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -56,5 +57,39 @@ void main() {
       ),
       isFalse,
     );
+  });
+
+  test(
+    'restores legacy entries as WhatsApp and skips unknown targets',
+    () async {
+      SharedPreferences.setMockInitialValues({
+        RecentNumbersStore.storageKey: jsonEncode([
+          {'phone': '+12025550148', 'openedAt': '2026-01-01T00:00:00Z'},
+          {
+            'phone': '+12025550149',
+            'openedAt': '2026-01-01T00:00:00Z',
+            'target': 'unknown',
+          },
+        ]),
+      });
+      final entries = await store.load();
+      expect(entries, hasLength(1));
+      expect(entries.single.target, LinkOpenerTarget.whatsapp);
+    },
+  );
+
+  test('persists the last used app without duplicating a number', () async {
+    var entries = store.record([], '+12025550148', DateTime(2026, 1));
+    entries = store.record(
+      entries,
+      '+12025550148',
+      DateTime(2026, 2),
+      target: LinkOpenerTarget.telegram,
+    );
+    await store.save(entries);
+    final loaded = await store.load();
+    expect(loaded, hasLength(1));
+    expect(loaded.single.target, LinkOpenerTarget.telegram);
+    expect(loaded.single.openedAt, DateTime(2026, 2));
   });
 }
