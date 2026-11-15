@@ -141,6 +141,7 @@ jobs:
           umask 077
           keystore="$RUNNER_TEMP/upload-keystore.jks"
           printf '%s' "$ANDROID_KEYSTORE_BASE64" | base64 --decode > "$keystore"
+          test -s "$keystore"
           {
             echo "storeFile=$keystore"
             echo "storePassword=$ANDROID_KEYSTORE_PASSWORD"
@@ -182,6 +183,15 @@ jobs:
         with:
           name: android-release
           path: android-release
+
+      - name: Check Google Play credentials
+        env:
+          GOOGLE_PLAY_SERVICE_ACCOUNT_JSON: ${{ secrets.GOOGLE_PLAY_SERVICE_ACCOUNT_JSON }}
+        run: |
+          if [ -z "$GOOGLE_PLAY_SERVICE_ACCOUNT_JSON" ]; then
+            echo "::error::Set GOOGLE_PLAY_SERVICE_ACCOUNT_JSON in repository Actions secrets or the google-play environment."
+            exit 1
+          fi
 
       - name: Authenticate to Google Play (google-github-actions/auth v3)
         id: auth
