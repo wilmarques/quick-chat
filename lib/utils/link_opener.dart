@@ -1,6 +1,13 @@
 import 'package:url_launcher/url_launcher.dart';
 
-enum LinkOpenerTarget { whatsapp, telegram }
+enum LinkOpenerTarget {
+  whatsapp('WhatsApp'),
+  telegram('Telegram');
+
+  const LinkOpenerTarget(this.label);
+
+  final String label;
+}
 
 class LinkOpener {
   const LinkOpener();
@@ -13,10 +20,11 @@ class LinkOpener {
       throw 'No valid number provided';
     }
 
-    if (target == LinkOpenerTarget.whatsapp) {
-      await _openLinkInWhatsApp(link);
-    } else {
-      throw 'Target not available';
+    switch (target) {
+      case LinkOpenerTarget.whatsapp:
+        await _openLinkInWhatsApp(link);
+      case LinkOpenerTarget.telegram:
+        await _openLinkInTelegram(link);
     }
   }
 
@@ -29,6 +37,14 @@ class LinkOpener {
 
     if (!await launchUrl(whatsAppUri)) {
       throw StateError('Could not open WhatsApp');
+    }
+  }
+
+  Future<void> _openLinkInTelegram(String link) async {
+    final telegramUri = Uri.https('t.me', '/$link');
+
+    if (!await launchUrl(telegramUri, mode: LaunchMode.externalApplication)) {
+      throw StateError('Could not open Telegram');
     }
   }
 }

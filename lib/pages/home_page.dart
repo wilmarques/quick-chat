@@ -53,27 +53,24 @@ class _HomePageState extends State<HomePage> {
     }
   }
 
-  void _openInWhatsapp() {
+  void _openInTarget(LinkOpenerTarget target) {
     final phone = _phoneNumberController.value;
     if (!phone.isValid()) {
       _showMessage('Enter a valid phone number.');
       return;
     }
-    _openPhoneOnTarget('+${phone.countryCode}${phone.nsn}');
+    _openPhoneOnTarget('+${phone.countryCode}${phone.nsn}', target);
   }
 
-  Future<void> _openPhoneOnTarget(String phone) async {
+  Future<void> _openPhoneOnTarget(String phone, LinkOpenerTarget target) async {
     if (_busy || !_historyLoaded) return;
     setState(() => _busy = true);
     try {
-      await widget.linkOpener.openLink(
-        link: phone,
-        target: LinkOpenerTarget.whatsapp,
-      );
+      await widget.linkOpener.openLink(link: phone, target: target);
     } catch (_) {
       if (!mounted) return;
       setState(() => _busy = false);
-      _showMessage('Could not open WhatsApp. Please try again.');
+      _showMessage('Could not open ${target.label}. Please try again.');
       return;
     }
     if (!mounted) return;
@@ -81,13 +78,14 @@ class _HomePageState extends State<HomePage> {
       _recentNumbers,
       phone,
       DateTime.now(),
+      target: target,
     );
     setState(() => _recentNumbers = updated);
     try {
       await widget.recentNumbersStore.save(updated);
     } catch (_) {
       if (mounted) {
-        _showMessage('WhatsApp opened, but history could not be saved.');
+        _showMessage('${target.label} opened, but history could not be saved.');
       }
     } finally {
       if (mounted) setState(() => _busy = false);
@@ -190,9 +188,21 @@ class _HomePageState extends State<HomePage> {
               children: [
                 ElevatedButton.icon(
                   key: const Key('open_in_whatsapp_button'),
-                  onPressed: _historyLoaded && !_busy ? _openInWhatsapp : null,
+                  onPressed: _historyLoaded && !_busy
+                      ? () => _openInTarget(LinkOpenerTarget.whatsapp)
+                      : null,
                   icon: const FaIcon(FontAwesomeIcons.whatsapp, size: 18),
                   label: const Text('Open in WhatsApp'),
+                  style: ElevatedButton.styleFrom(elevation: 8.0),
+                ),
+                const SizedBox(height: 12),
+                ElevatedButton.icon(
+                  key: const Key('open_in_telegram_button'),
+                  onPressed: _historyLoaded && !_busy
+                      ? () => _openInTarget(LinkOpenerTarget.telegram)
+                      : null,
+                  icon: const FaIcon(FontAwesomeIcons.telegram, size: 18),
+                  label: const Text('Open in Telegram'),
                   style: ElevatedButton.styleFrom(elevation: 8.0),
                 ),
                 TextButton(
@@ -205,7 +215,8 @@ class _HomePageState extends State<HomePage> {
               RecentNumbersSection(
                 entries: _recentNumbers,
                 enabled: !_busy,
-                onOpen: _openPhoneOnTarget,
+                onOpen: (entry) =>
+                    _openPhoneOnTarget(entry.phone, entry.target),
                 onClearAll: _clearHistory,
               ),
           ],

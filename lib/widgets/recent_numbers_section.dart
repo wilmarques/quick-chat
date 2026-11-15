@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:phone_form_field/phone_form_field.dart';
 
+import '../utils/link_opener.dart';
 import '../utils/recent_numbers_store.dart';
 
 class RecentNumbersSection extends StatelessWidget {
@@ -15,7 +16,7 @@ class RecentNumbersSection extends StatelessWidget {
 
   final List<RecentNumber> entries;
   final bool enabled;
-  final ValueChanged<String> onOpen;
+  final ValueChanged<RecentNumber> onOpen;
   final VoidCallback onClearAll;
 
   @override
@@ -53,7 +54,7 @@ class RecentNumbersSection extends StatelessWidget {
                   const Divider(height: 1, indent: 16, endIndent: 16),
                 _RecentNumberTile(
                   entry: entries[index],
-                  onTap: enabled ? () => onOpen(entries[index].phone) : null,
+                  onTap: enabled ? () => onOpen(entries[index]) : null,
                 ),
               ],
             ],
@@ -61,7 +62,7 @@ class RecentNumbersSection extends StatelessWidget {
         ),
         const SizedBox(height: 12),
         Text(
-          'Tap a number to reopen in WhatsApp.\nHistory stays on this device.',
+          'Tap a number to reopen in its last used app.\nHistory stays on this device.',
           style: theme.textTheme.bodySmall,
         ),
         const SizedBox(height: 24),
@@ -82,12 +83,16 @@ class _RecentNumberTile extends StatelessWidget {
     return ListTile(
       key: ValueKey('recent_${entry.phone}'),
       leading: FaIcon(
-        FontAwesomeIcons.whatsapp,
+        entry.target == LinkOpenerTarget.whatsapp
+            ? FontAwesomeIcons.whatsapp
+            : FontAwesomeIcons.telegram,
         color: colors.primary,
         size: 22,
       ),
       title: Text(PhoneNumber.parse(entry.phone).international),
-      subtitle: Text(_openedAtLabel(context, entry.openedAt)),
+      subtitle: Text(
+        '${entry.target.label} · ${_openedAtLabel(context, entry.openedAt)}',
+      ),
       trailing: Icon(Icons.chevron_right, color: colors.primary),
       onTap: onTap,
     );

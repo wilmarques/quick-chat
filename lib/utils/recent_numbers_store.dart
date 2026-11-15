@@ -2,15 +2,23 @@ import 'dart:convert';
 
 import 'package:shared_preferences/shared_preferences.dart';
 
+import 'link_opener.dart';
+
 class RecentNumber {
-  const RecentNumber({required this.phone, required this.openedAt});
+  const RecentNumber({
+    required this.phone,
+    required this.openedAt,
+    this.target = LinkOpenerTarget.whatsapp,
+  });
 
   final String phone;
   final DateTime openedAt;
+  final LinkOpenerTarget target;
 
   Map<String, String> toJson() => {
     'phone': phone,
     'openedAt': openedAt.toUtc().toIso8601String(),
+    'target': target.name,
   };
 }
 
@@ -43,7 +51,19 @@ class RecentNumbersStore {
       if (openedAt == null || !RegExp(r'^\+[1-9]\d{6,14}$').hasMatch(phone)) {
         continue;
       }
-      entries.add(RecentNumber(phone: phone, openedAt: openedAt.toLocal()));
+      final target = switch (item['target']) {
+        null || 'whatsapp' => LinkOpenerTarget.whatsapp,
+        'telegram' => LinkOpenerTarget.telegram,
+        _ => null,
+      };
+      if (target == null) continue;
+      entries.add(
+        RecentNumber(
+          phone: phone,
+          openedAt: openedAt.toLocal(),
+          target: target,
+        ),
+      );
     }
     entries.sort((a, b) => b.openedAt.compareTo(a.openedAt));
     final seen = <String>{};
@@ -69,9 +89,10 @@ class RecentNumbersStore {
   List<RecentNumber> record(
     List<RecentNumber> entries,
     String phone,
-    DateTime now,
-  ) => [
-    RecentNumber(phone: phone, openedAt: now),
+    DateTime now, {
+    LinkOpenerTarget target = LinkOpenerTarget.whatsapp,
+  }) => [
+    RecentNumber(phone: phone, openedAt: now, target: target),
     ...entries.where((entry) => entry.phone != phone),
   ].take(maxEntries).toList();
 }
